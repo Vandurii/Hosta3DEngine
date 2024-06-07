@@ -14,5 +14,11 @@ public class StaticShader extends ShaderProgram{
     @Override
     public void bindAttributes() {
         super.bindAttribute(0, "position");
+        super.bindAttribute(1, "vTexCords");
     }
+
+    public <T> void uploadValue(String name, T val){
+        super.uploadValue(name, val);
+    }
+
 }

@@ -1,5 +1,7 @@
 package main.renderEngine;
 
+import main.models.RawModel;
+import main.textures.Texture;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -14,11 +16,13 @@ import static org.lwjgl.opengl.GL30.*;
 public class Loader {
     private List<Integer> vaos = new ArrayList<>();
     private List<Integer> vbos = new ArrayList<>();
+    private List<Integer> textures = new ArrayList<>();
 
-    public RawModel loadToVao(float[] positions, int[] indices){
+    public RawModel loadToVao(float[] positions, int[] indices, float[] texCords){
         int vaoID = createVao();
         bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, positions);
+        storeDataInAttributeList(0, positions, 3);
+        storeDataInAttributeList(1, texCords, 2);
         unbindVao();
 
         return new RawModel(vaoID, indices.length);
@@ -32,13 +36,20 @@ public class Loader {
         return vaoID;
     }
 
-    public void storeDataInAttributeList(int attribNumber, float[] data){
+    public int loadTexture(String path){
+        Texture texture = new Texture(path, false);
+        textures.add(texture.getTexID());
+
+        return texture.getTexID();
+    }
+
+    public void storeDataInAttributeList(int attribNumber, float[] data, int size){
         int vboID = glGenBuffers();
         vbos.add(vboID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         FloatBuffer floatBuffer = storeDataInFloatBuffer(data);
         glBufferData(GL_ARRAY_BUFFER, floatBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attribNumber, 3, GL_FLOAT, false, 0, 0);
+        glVertexAttribPointer(attribNumber, size, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -77,6 +88,10 @@ public class Loader {
 
         for(Integer vbo: vbos){
             glDeleteBuffers(vbo);
+        }
+
+        for(Integer tex: textures){
+            glDeleteTextures(tex);
         }
     }
 }

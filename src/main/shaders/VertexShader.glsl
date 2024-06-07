@@ -1,10 +1,15 @@
 #version 330 core
 
 in vec3 position;
+in vec2 vTexCords;
 
-out vec3 color;
+out vec2 fTexCords;
+
+uniform mat4 transMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 void main(){
-    color = vec3(position.x + 0.5, 1, position.y + 0.5);
-    gl_Position = vec4(position, 1);
+    gl_Position = projectionMatrix * viewMatrix * transMatrix * vec4(position, 1);
+    fTexCords = vTexCords;
 }

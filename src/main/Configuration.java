@@ -12,4 +12,14 @@ public class Configuration {
     public static String defaultVertexShaderPath = "src/main/shaders/VertexShader.glsl";
 
     public static final Vector4f clearColor = new Vector4f(0.2f, 0.2f, 0.2f, 1);
+
+    public static final String minecraftImagePath = "res/minecraft.png";
+    public static final String redAlphaImagePath = "res/redAlpha.png";
+
+    public static final String dragonObjPath = "res/dragon.obj";
+
+    public static float FOV = 70;
+    public static float NEAR_PLAN = 0.1f;
+    public static float FAR_PLAN = 1000;
+
 }
