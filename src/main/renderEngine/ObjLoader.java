@@ -47,7 +47,7 @@ public class ObjLoader {
         try (BufferedReader bufReader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = bufReader.readLine()) != null) {
-                System.out.println(line);
+
                 String[] values = line.split(" ");
                 float val1 = 0;
                 float val2 = 0;
@@ -71,7 +71,7 @@ public class ObjLoader {
                     normalsList.add(new Vector3f(val1, val2, val3));
                 } else if (line.startsWith(breakID)) {
                     cordsArray = new float[verticesList.size() * cordSize];
-                    normalsArray = new float[normalsList.size() * normalSize];
+                    normalsArray = new float[verticesList.size() * normalSize];
                     break;
                 }
             }
@@ -99,7 +99,7 @@ public class ObjLoader {
             verticesArray[i] = verticesList.get(i);
         }
 
-        return loader.loadToVao(verticesArray, indicesArray, cordsArray);
+        return loader.loadToVao(verticesArray, indicesArray, cordsArray, normalsArray);
     }
 
     public void processVertex(String face){

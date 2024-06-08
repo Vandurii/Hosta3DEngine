@@ -15,6 +15,7 @@ public class StaticShader extends ShaderProgram{
     public void bindAttributes() {
         super.bindAttribute(0, "position");
         super.bindAttribute(1, "vTexCords");
+        super.bindAttribute(2, "vNormals");
     }
 
     public <T> void uploadValue(String name, T val){

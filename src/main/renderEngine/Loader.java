@@ -1,7 +1,7 @@
 package main.renderEngine;
 
 import main.models.RawModel;
-import main.textures.Texture;
+import main.textures.TextureModel;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -18,11 +18,12 @@ public class Loader {
     private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
-    public RawModel loadToVao(float[] positions, int[] indices, float[] texCords){
+    public RawModel loadToVao(float[] vertices, int[] indices, float[] texCords, float[] normals){
         int vaoID = createVao();
         bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, positions, 3);
+        storeDataInAttributeList(0, vertices, 3);
         storeDataInAttributeList(1, texCords, 2);
+        storeDataInAttributeList(2, normals, 3);
         unbindVao();
 
         return new RawModel(vaoID, indices.length);
@@ -36,11 +37,11 @@ public class Loader {
         return vaoID;
     }
 
-    public int loadTexture(String path){
-        Texture texture = new Texture(path, false);
-        textures.add(texture.getTexID());
+    public TextureModel loadTexture(String path){
+        TextureModel textureModel = new TextureModel(path, false);
+        textures.add(textureModel.getTexID());
 
-        return texture.getTexID();
+        return textureModel;
     }
 
     public void storeDataInAttributeList(int attribNumber, float[] data, int size){

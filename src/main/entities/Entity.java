@@ -1,10 +1,7 @@
 package main.entities;
 
 import main.models.TextureRawModel;
-import main.textures.TextureModel;
 import org.joml.Vector3f;
-
-import java.util.Vector;
 
 public class Entity {
     private TextureRawModel textureRawModel;
@@ -47,7 +44,7 @@ public class Entity {
         source.z -= value.z;
     }
 
-    public TextureRawModel getTextureModel() {
+    public TextureRawModel getTExtureRawModel() {
         return textureRawModel;
     }
 

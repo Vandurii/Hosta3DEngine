@@ -25,6 +25,10 @@ public class KeyController {
             Camera.move(Right);
         }else if(keyboard.isKeyPressed(GLFW_KEY_LEFT)){
             Camera.move(Left);
+        }else if(keyboard.isKeyPressed(GLFW_KEY_W)){
+            Camera.move(forward);
+        }else if(keyboard.isKeyPressed(GLFW_KEY_S)){
+            Camera.move(backward);
         }
     }
 }
