@@ -2,7 +2,7 @@ package main.renderEngine;
 
 import main.entities.Entity;
 import main.models.RawModel;
-import main.models.TextureRawModel;
+import main.models.ObjectModel;
 import main.shaders.StaticShader;
 import main.textures.TextureModel;
 import main.tollbox.Maths;
@@ -28,10 +28,10 @@ public class EntityRenderer {
         shader.stop();
     }
 
-    public void render(Map<TextureRawModel, List<Entity>> entitiesMap){
-        for(TextureRawModel textureRawModel: entitiesMap.keySet()){
-            prepareTextureModel(textureRawModel);
-            List<Entity> entityList = entitiesMap.get(textureRawModel);
+    public void render(Map<ObjectModel, List<Entity>> entitiesMap){
+        for(ObjectModel objectModel : entitiesMap.keySet()){
+            prepareTextureModel(objectModel);
+            List<Entity> entityList = entitiesMap.get(objectModel);
 
             for(Entity entity: entityList){
                 prepareInstance(entity);
@@ -41,14 +41,20 @@ public class EntityRenderer {
         }
     }
 
-    public void prepareTextureModel(TextureRawModel textureRawModel){
-        RawModel rawModel = textureRawModel.getRawModel();
+    public void prepareTextureModel(ObjectModel objectModel){
+        RawModel rawModel = objectModel.getRawModel();
+        TextureModel textureModel = objectModel.getModelTexture();
+
+        if(textureModel.hasTransparency()){
+            MasterRenderer.disableCulling();
+        }
+
         glBindVertexArray(rawModel.getVaoID());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        TextureModel textureModel = textureRawModel.getModelTexture();
+        shader.uploadValue("hasFakeLightning", textureModel.hasFakeLightning());
         shader.uploadValue("shineDamper", textureModel.getShineDamper());
         shader.uploadValue("reflectivity", textureModel.getReflectivity());
 
@@ -61,6 +67,8 @@ public class EntityRenderer {
         glDisableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
         glBindVertexArray(0);
+
+        MasterRenderer.enableCulling();
     }
 
     public void prepareInstance(Entity entity) {

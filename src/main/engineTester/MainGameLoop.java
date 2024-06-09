@@ -4,70 +4,73 @@ import main.controller.KeyController;
 import main.entities.Camera;
 import main.entities.Entity;
 import main.entities.Light;
-import main.models.TextureRawModel;
+import main.models.ObjectModel;
 import main.renderEngine.*;
 import main.models.RawModel;
-import main.terrains.Terrain;
+import main.terrains.grassTerrain;
 import main.textures.TextureModel;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static main.Configuration.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 public class MainGameLoop {
-
+    private static Random random = new Random();
+    private static List<Entity> entities = new ArrayList<>();
+    private static List<grassTerrain> grassTerrains = new ArrayList<>();
 
     public static void main(String[] args) {
         DisplayManager.createDisplay();
         KeyController keyController = new KeyController();
         MasterRenderer renderer = new MasterRenderer();
-
         Loader loader = new Loader();
-
-        List<Entity> entities = new ArrayList<>();
-
 
         // Scene stuff
         Camera camera = new Camera();
-        Light light = new Light(new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+        Light light = new Light(lightPosition, lightColor);
 
         // Dragon stuff
         RawModel dragonRawModel = new ObjLoader().loadObjModel(dragonObjPath, loader);
+        TextureModel drgaonTextureModel = loader.loadTexture(redAlphaImagePath, false);
+        ObjectModel dragonObjectModel = new ObjectModel(dragonRawModel, drgaonTextureModel);
 
-        TextureModel drgaonTextureModel = loader.loadTexture(redAlphaImagePath);
-        drgaonTextureModel.setReflectivity(1);
-        drgaonTextureModel.setShineDamper(10);
+        // Terrain stuff
+        TextureModel grassTexture = loader.loadTexture(grassImagePath, true, 0, 0);
 
-        TextureRawModel dragonTextureRawModel = new TextureRawModel(dragonRawModel, drgaonTextureModel);
-        entities.add(new Entity(dragonTextureRawModel, new Vector3f(15, 1, -100), new Vector3f(), 1));
-
-        // Grass stuff
-        TextureModel grassTexture = loader.loadTexture(grassImagePath);
-        grassTexture.setShineDamper(10);
-        grassTexture.setReflectivity(1);
-
-        List<Terrain> terrains = new ArrayList<>();
-        terrains.add(new Terrain(0, -1, loader, grassTexture));
-        terrains.add(new Terrain(-1, -1, loader, grassTexture));
-
-        // tree stuff
+        // Fern stuff
         RawModel fernRawModel = new ObjLoader().loadObjModel(fernObj, loader);
+        TextureModel fernTextureModel = loader.loadTexture(fernImagePath, true, 0, 0, true, true);
+        ObjectModel fernObjectModel = new ObjectModel(fernRawModel, fernTextureModel);
 
-        TextureModel fernTextureModel = loader.loadTexture(fernImagePath);
-        drgaonTextureModel.setReflectivity(1);
-        drgaonTextureModel.setShineDamper(10);
+        // Tree stuff
+        RawModel treeRawModel = new ObjLoader().loadObjModel(treeObjPath, loader);
+        TextureModel treeTextureModel = loader.loadTexture(treeImagePath, true, 0, 0);
+        ObjectModel treeObjectModel = new ObjectModel(treeRawModel, treeTextureModel);
 
-        TextureRawModel fernTextureRawModel = new TextureRawModel(fernRawModel, fernTextureModel);
-        entities.add(new Entity(fernTextureRawModel, new Vector3f(0, terrainZVal, -100), new Vector3f(), 1));
+        // LowPolyTree stuff
+        RawModel lowPoyTreeRawModel = new ObjLoader().loadObjModel(lowPolyTreeObjPath, loader);
+        TextureModel lowPolyTreeTexture = loader.loadTexture(lowPolyTreeImagePath, true, 0, 0);
+        ObjectModel lowPolyTreeObject = new ObjectModel(lowPoyTreeRawModel, lowPolyTreeTexture);
 
+        // GenerateEntities
+        int defaultCount = 400;
+        generateEntities(treeObjectModel, treeScale, defaultCount);
+        generateEntities(fernObjectModel, fernScale, defaultCount);
+        generateEntities(lowPolyTreeObject, lowPolyTreeScale, defaultCount);
 
+        entities.add(new Entity(dragonObjectModel, new Vector3f(15, 1, -100), new Vector3f(), 1));
+
+        // Generate Terrains
+        grassTerrains.add(new grassTerrain(0, -1, loader, grassTexture));
+        grassTerrains.add(new grassTerrain(-1, -1, loader, grassTexture));
 
         while (!glfwWindowShouldClose(DisplayManager.getGLFW())) {
             keyController.update();
-            entities.get(0).increaseRotation(new Vector3f(0, 1, 0));
+            entities.get(entities.size() - 1).increaseRotation(new Vector3f(0, 1, 0));
 
             // Add Entities.
             for(Entity e: entities){
@@ -75,8 +78,8 @@ public class MainGameLoop {
             }
 
             // Add terrains.
-            for(Terrain terrain: terrains){
-                renderer.addTerrain(terrain);
+            for(grassTerrain grassTerrain : grassTerrains){
+                renderer.addTerrain(grassTerrain);
             }
 
             // Render scene.
@@ -88,5 +91,14 @@ public class MainGameLoop {
 
         loader.cleanUp();
         DisplayManager.closeDisplay();
+    }
+
+    public static void generateEntities(ObjectModel objectModel, float scale, int count){
+        for(int i = 0; i < count; i++) {
+            int x = random.nextInt(xMin, xMax);
+            int z = random.nextInt(zMin, zMax);
+
+            entities.add(new Entity(objectModel, new Vector3f(x, terrainYVal, z ), new Vector3f(), scale));
+        }
     }
 }

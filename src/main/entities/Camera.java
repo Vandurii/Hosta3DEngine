@@ -14,14 +14,14 @@ public class Camera {
     }
 
     public static void move(Direction direction){
-        float val = 0.8f;
+        float val = 0.2f;
         switch (direction){
-            case Up -> position.y += val;
-            case Down ->  position.y -= val;
+            case Up -> position.z -= val;
+            case Down ->  position.z += val;
             case Left -> position.x -= val;
             case Right ->  position.x += val;
-            case backward -> position.z -= val;
-            case forward ->  position.z += val;
+            case backward -> position.y -= val;
+            case forward ->  position.y += val;
         }
     }
 

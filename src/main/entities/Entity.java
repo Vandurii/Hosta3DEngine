@@ -1,16 +1,16 @@
 package main.entities;
 
-import main.models.TextureRawModel;
+import main.models.ObjectModel;
 import org.joml.Vector3f;
 
 public class Entity {
-    private TextureRawModel textureRawModel;
+    private ObjectModel objectModel;
     private Vector3f position;
     private Vector3f rotation;
     private float scale;
 
-    public Entity(TextureRawModel  textureRawModel, Vector3f position, Vector3f rotation, float scale){
-        this.textureRawModel = textureRawModel;
+    public Entity(ObjectModel objectModel, Vector3f position, Vector3f rotation, float scale){
+        this.objectModel = objectModel;
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
@@ -44,12 +44,12 @@ public class Entity {
         source.z -= value.z;
     }
 
-    public TextureRawModel getTExtureRawModel() {
-        return textureRawModel;
+    public ObjectModel getTExtureRawModel() {
+        return objectModel;
     }
 
-    public void TextureRawModel(TextureRawModel textureRawModel) {
-        this.textureRawModel = textureRawModel;
+    public void TextureRawModel(ObjectModel objectModel) {
+        this.objectModel = objectModel;
     }
 
     public Vector3f getPosition() {

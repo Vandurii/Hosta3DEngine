@@ -3,10 +3,10 @@ package main.renderEngine;
 import main.entities.Camera;
 import main.entities.Entity;
 import main.entities.Light;
-import main.models.TextureRawModel;
+import main.models.ObjectModel;
 import main.shaders.StaticShader;
 import main.shaders.TerrainShader;
-import main.terrains.Terrain;
+import main.terrains.grassTerrain;
 import main.tollbox.Maths;
 import org.joml.Matrix4f;
 
@@ -24,15 +24,14 @@ public class MasterRenderer {
 
     private StaticShader shader;
     private EntityRenderer entityRenderer;
-    private Map<TextureRawModel, List<Entity>> entities;
+    private Map<ObjectModel, List<Entity>> entities;
 
     private TerrainShader terrainShader;
     private TerrainRenderer terrainRenderer;
-    private List<Terrain> terrainList;
+    private List<grassTerrain> grassTerrainList;
 
     public MasterRenderer(){
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        enableCulling();
 
         this.projectionMatrix = createProjectionMatrix();
 
@@ -42,7 +41,7 @@ public class MasterRenderer {
 
         this.terrainShader = new TerrainShader();
         this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
-        this.terrainList = new ArrayList<>();
+        this.grassTerrainList = new ArrayList<>();
     }
 
     public void render(Light light, Camera camera){
@@ -58,20 +57,20 @@ public class MasterRenderer {
         terrainShader.uploadValue("lightColor", light.getColor());
         terrainShader.uploadValue("lightPos", light.getPosition());
         terrainShader.uploadValue("viewMatrix", Maths.createViewMatrix(camera));
-        terrainRenderer.render(terrainList);
+        terrainRenderer.render(grassTerrainList);
         terrainShader.stop();
 
-        terrainList.clear();
+        grassTerrainList.clear();
         entities.clear();
     }
 
     public void processEntity(Entity entity){
-        TextureRawModel textureRawModel = entity.getTExtureRawModel();
-       if(!entities.containsKey(textureRawModel)){
-           entities.put(textureRawModel, new ArrayList<Entity>());
+        ObjectModel objectModel = entity.getTExtureRawModel();
+       if(!entities.containsKey(objectModel)){
+           entities.put(objectModel, new ArrayList<Entity>());
        }
 
-       entities.get(textureRawModel).add(entity);
+       entities.get(objectModel).add(entity);
     }
 
     public void prepare(){
@@ -80,12 +79,21 @@ public class MasterRenderer {
         glClearColor(clearColor.x, clearColor.y, clearColor.z,1);
     }
 
-    public void addTerrain(Terrain terrain){
-        terrainList.add(terrain);
+    public void addTerrain(grassTerrain grassTerrain){
+        grassTerrainList.add(grassTerrain);
     }
 
     public void cleanUp(){
         shader.cleanUp();
+    }
+
+    public static void enableCulling(){
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+
+    public static void disableCulling(){
+        glDisable(GL_CULL_FACE);
     }
 
     public Matrix4f createProjectionMatrix(){

@@ -37,8 +37,29 @@ public class Loader {
         return vaoID;
     }
 
-    public TextureModel loadTexture(String path){
-        TextureModel textureModel = new TextureModel(path, false);
+    public TextureModel loadTexture(String path, boolean flip){
+        TextureModel textureModel = new TextureModel(path, flip);
+        textures.add(textureModel.getTexID());
+
+        return textureModel;
+    }
+
+    public TextureModel loadTexture(String path, boolean flip, float dampVal, float refVal){
+        TextureModel textureModel = new TextureModel(path, flip, dampVal, refVal);
+        textures.add(textureModel.getTexID());
+
+        return textureModel;
+    }
+
+    public TextureModel loadTexture(String path, boolean flip, boolean transparency, boolean fakeLightning){
+        TextureModel textureModel = new TextureModel(path, flip, transparency, fakeLightning);
+        textures.add(textureModel.getTexID());
+
+        return textureModel;
+    }
+
+    public TextureModel loadTexture(String path, boolean flip, float dampVal, float refVal, boolean transparency, boolean fakeLightning ){
+        TextureModel textureModel = new TextureModel(path, flip, dampVal, refVal, transparency, fakeLightning);
         textures.add(textureModel.getTexID());
 
         return textureModel;

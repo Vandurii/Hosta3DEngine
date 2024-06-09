@@ -3,6 +3,7 @@ package main.shaders;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
@@ -89,6 +90,9 @@ public abstract class ShaderProgram {
         }else if(type instanceof int[]){
             int[] value = (int[]) type;
             glUniform1iv(varLocation, value);
+        }else if(type instanceof Boolean value){
+            float val = value ? 1 : 0;
+            glUniform1f(varLocation, val);
         }else{
             throw new IllegalStateException("Unexpected value in shader class uploadValue method. --> type:" + type.getClass().getSimpleName() );
         }

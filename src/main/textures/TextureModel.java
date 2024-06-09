@@ -5,6 +5,8 @@ import org.lwjgl.BufferUtils;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import static main.Configuration.defaultReflectivity;
+import static main.Configuration.defaultShineDamper;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.*;
 
@@ -17,10 +19,51 @@ public class TextureModel {
     private float shineDamper;
     private float reflectivity;
 
+    private boolean hasTransparency;
+    private boolean hasFakeLightning;
+
     public TextureModel(String filePath, boolean flip){
+        this.shineDamper = defaultShineDamper;
+        this.reflectivity = defaultReflectivity;
         this.filePath = filePath;
         this.flip = flip;
 
+        create();
+    }
+
+    public TextureModel(String filePath, boolean flip, float shineDamper, float reflectivity){
+        this.reflectivity = reflectivity;
+        this.shineDamper = shineDamper;
+        this.filePath = filePath;
+        this.flip = flip;
+
+        create();
+    }
+
+    public TextureModel(String filePath, boolean flip, boolean hasTransparency, boolean hasFakeLightning){
+        this.hasFakeLightning = hasFakeLightning;
+        this.hasTransparency = hasTransparency;
+        this.reflectivity = defaultReflectivity;
+        this.shineDamper = defaultShineDamper;
+        this.filePath = filePath;
+        this.flip = flip;
+
+        create();
+    }
+
+    public TextureModel(String filePath, boolean flip, float shineDamper, float reflectivity, boolean hasTransparency, boolean hasFakeLightning){
+        this.reflectivity = defaultReflectivity;
+        this.shineDamper = defaultShineDamper;
+        this.hasFakeLightning = hasFakeLightning;
+        this.hasTransparency = hasTransparency;
+        this.filePath = filePath;
+        this.flip = flip;
+
+        create();
+    }
+
+
+    private void create(){
         texID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -54,6 +97,7 @@ public class TextureModel {
         }
     }
 
+
     public int getWidth(){
         return width;
     }
@@ -84,5 +128,21 @@ public class TextureModel {
 
     public void setReflectivity(float reflectivity) {
         this.reflectivity = reflectivity;
+    }
+
+    public boolean hasTransparency() {
+        return hasTransparency;
+    }
+
+    public void setTransparency(boolean hasTransparency) {
+        this.hasTransparency = hasTransparency;
+    }
+
+    public boolean hasFakeLightning() {
+        return hasFakeLightning;
+    }
+
+    public void setFakeLightning(boolean hasFakeLightning) {
+        this.hasFakeLightning = hasFakeLightning;
     }
 }

@@ -2,7 +2,7 @@ package main.renderEngine;
 
 import main.models.RawModel;
 import main.shaders.TerrainShader;
-import main.terrains.Terrain;
+import main.terrains.grassTerrain;
 import main.textures.TextureModel;
 import main.tollbox.Maths;
 import org.joml.Matrix4f;
@@ -10,7 +10,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-import static main.Configuration.terrainZVal;
+import static main.Configuration.terrainYVal;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -27,23 +27,23 @@ public class TerrainRenderer {
         terrainShader.stop();
     }
 
-    public void render(List<Terrain> terrainList){
-        for(Terrain terrain: terrainList){
-            prepareTerrain(terrain);
-            loadModelMatrix(terrain);
-            glDrawElements(GL_TRIANGLES, terrain.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);
+    public void render(List<grassTerrain> grassTerrainList){
+        for(grassTerrain grassTerrain : grassTerrainList){
+            prepareTerrain(grassTerrain);
+            loadModelMatrix(grassTerrain);
+            glDrawElements(GL_TRIANGLES, grassTerrain.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);
             unbindTextureModel();
         }
     }
 
-    public void prepareTerrain(Terrain terrain){
-        RawModel rawModel = terrain.getRawModel();
+    public void prepareTerrain(grassTerrain grassTerrain){
+        RawModel rawModel = grassTerrain.getRawModel();
         glBindVertexArray(rawModel.getVaoID());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        TextureModel textureModel = terrain.getTextureModel();
+        TextureModel textureModel = grassTerrain.getTextureModel();
         terrainShader.uploadValue("shineDamper", textureModel.getShineDamper());
         terrainShader.uploadValue("reflectivity", textureModel.getReflectivity());
 
@@ -58,8 +58,8 @@ public class TerrainRenderer {
         glBindVertexArray(0);
     }
 
-    public void loadModelMatrix(Terrain terrain) {
-        Matrix4f transMatrix = Maths.createTransformMatrix(new Vector3f(terrain.getX(), terrainZVal, terrain.getZ()), new Vector3f(0), 1);
+    public void loadModelMatrix(grassTerrain grassTerrain) {
+        Matrix4f transMatrix = Maths.createTransformMatrix(new Vector3f(grassTerrain.getX(), terrainYVal, grassTerrain.getZ()), new Vector3f(0), 1);
         terrainShader.uploadValue("transMatrix", transMatrix);
     }
 }
