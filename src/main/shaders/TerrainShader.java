@@ -12,9 +12,9 @@ public class TerrainShader extends ShaderProgram{
 
     @Override
     public void bindAttributes() {
-        super.bindAttribute(0, "position");
-        super.bindAttribute(1, "vTexCords");
-        super.bindAttribute(2, "vNormals");
+        super.bindAttribute(0, positionID);
+        super.bindAttribute(1, texCordsID);
+        super.bindAttribute(2, normalsID);
     }
 
     public <T> void uploadValue(String name, T val){

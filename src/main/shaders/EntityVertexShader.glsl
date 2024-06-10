@@ -1,33 +1,48 @@
 #version 330 core
 
-in vec3 position;
+in vec3 vPos;
 in vec2 vTexCords;
 in vec3 vNormals;
 
 out vec2 fTexCords;
-out vec3 surfaceNormal;
+out vec3 fNormals;
 out vec3 toLightVector;
 out vec3 toCameraVector;
 
-uniform mat4 transMatrix;
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
+// Fog
+out float visibility;
+
+uniform mat4 transformation;
+uniform mat4 projection;
+uniform mat4 view;
 
 uniform vec3 lightPos;
-uniform float hasFakeLightning;
+uniform float fakeLightning;
 
 void main(){
     vec3 vAcutalNormals = vNormals;
-    if(hasFakeLightning > 0.5){
-        vAcutalNormals = vec3(1, 1, 1);
+    if(fakeLightning > 0.5){
+        vAcutalNormals = vec3(1.0, 1.0, 1.0);
     }
 
-    vec4 worldPosition = transMatrix * vec4(position, 1);
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
-    fTexCords = vTexCords ;
+    // projection, transform, view
+    vec4 worldPosition = transformation * vec4(vPos, 1.0);
+    vec4 positionRelativeToCam = view * worldPosition;
+    gl_Position = projection * positionRelativeToCam;
 
-    surfaceNormal = (transMatrix * vec4(vAcutalNormals, 0)).xyz;
+    fTexCords = vTexCords ;
+    fNormals = (transformation * vec4(vAcutalNormals, 0.0)).xyz;
     toLightVector = lightPos - worldPosition.xyz;
 
-    toCameraVector = (inverse (viewMatrix) * vec4(0, 0, 0, 1)).xyz - worldPosition.xyz;
+    toCameraVector = (inverse (view) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+
+    // Fog
+    float density = 0.015;
+    float gradient = 1.0;
+    float d = length(positionRelativeToCam);
+
+    visibility = exp(-pow((d * density), gradient));
+    visibility = clamp(visibility, 0.0, 1.0);
+
+
 }

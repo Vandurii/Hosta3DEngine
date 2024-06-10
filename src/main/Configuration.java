@@ -11,26 +11,31 @@ public class Configuration {
     public static String objectPrefix = "res/objects/";
     public static String shaderPrefix = "src/main/shaders/";
 
+    // Colors
+    public static Vector4f skyBlue = new Vector4f(0.5f, 0.5f, 1f, 1);
+    public static Vector4f grey = new Vector4f(0.2f, 0.2f, 0.2f, 1);
+
     // Window Settings
     public static final String WINDOW_TITLE = "Hosta";
     public static final int WINDOW_WIDTH = 1280;
     public static final int WINDOW_HEIGHT = 720;
 
     // Shaders
-    public static String defaultFragmentShaderPath = Path.fromShader("EntityFragmentShader");
-    public static String defaultVertexShaderPath = Path.fromShader("EntityVertexShader");
+    public static String entityFragmentShaderPath = Path.fromShader("EntityFragmentShader");
+    public static String entityVertexShaderPath = Path.fromShader("EntityVertexShader");
     public static String terrainFragmentShaderPath = Path.fromShader("terrainFragmentShader");
     public static String terrainVertexShaderPath = Path.fromShader("terrainVertexShader");
 
     // Background
-    public static final Vector4f clearColor = new Vector4f(0.5f, 0.5f, 1f, 1);
+    public static final Vector4f clearColor = grey;
 
     // resources
     public static final String redAlphaImagePath = Path.fromRes("redAlpha.png");
 
     // textures
-    public static final String grassImagePath = Path.fromTexture("terrainGrass.png");
+    public static final String terrainGrassImagePath = Path.fromTexture("terrainGrass.png");
     public static final String treeImagePath = Path.fromTexture("tree.png");
+    public static final String grassImagePath = Path.fromTexture("grassTexture.png");
     public static final String lowPolyTreeImagePath = Path.fromTexture("lowPolyTree.png");
     public static final String fernImagePath = Path.fromTexture("fern.png");
 
@@ -41,6 +46,7 @@ public class Configuration {
     public static final String treeObjPath =Path.fromObject("tree");
     public static final String grassObjPath =Path.fromObject("grass");
     public static final String lowPolyTreeObjPath = Path.fromObject("lowPolyTree");
+    public static final String droneObjPath = Path.fromObject("drone");
 
     // Projection
     public static float FOV = 70;
@@ -67,5 +73,25 @@ public class Configuration {
     public static float treeScale = 3;
     public static float fernScale = 0.5f;
     public static float lowPolyTreeScale = 0.45f;
+
+    // shader
+
+    public static String positionID = "vPos";
+    public static String normalsID = "vNormals";
+    public static String texCordsID = "vTexCords";
+
+    public static String projectionID = "projection";
+    public static String viewID = "view";
+    public static String transformationID = "transformation";
+
+    public static String lightPositionID = "lightPos";
+    public static String lightColorID = "lightColor";
+
+    public static String shineDamperID = "shineDamper";
+    public static String reflectivityID = "reflectivity";
+
+    public static String fakeLightningID = "fakeLightning";
+
+    public static String skyColorID = "skyColor";
 
 }

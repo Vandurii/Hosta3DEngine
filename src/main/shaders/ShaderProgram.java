@@ -56,6 +56,7 @@ public abstract class ShaderProgram {
 
         if(glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE){
             System.out.println(glGetShaderInfoLog(shaderID, 500));
+            System.out.println(file);
             System.exit(-1);
         }
 

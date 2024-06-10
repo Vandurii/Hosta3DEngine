@@ -8,7 +8,7 @@ import main.models.ObjectModel;
 import main.renderEngine.*;
 import main.models.RawModel;
 import main.terrains.grassTerrain;
-import main.textures.TextureModel;
+import main.models.TextureModel;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -28,18 +28,26 @@ public class MainGameLoop {
         KeyController keyController = new KeyController();
         MasterRenderer renderer = new MasterRenderer();
         Loader loader = new Loader();
+        ObjLoader objLoader = new ObjLoader();
 
         // Scene stuff
         Camera camera = new Camera();
         Light light = new Light(lightPosition, lightColor);
 
+        // Grass stuff
+        ModelData grassData = OBJFileLoader.loadOBJ(grassObjPath);
+        RawModel grassRawModel = loader.loadToVao(grassData.getVertices(), grassData.getIndices(), grassData.getTextureCoords(), grassData.getNormals());new ObjLoader().loadObjModel(dragonObjPath, loader);
+        TextureModel grassTextureModel = loader.loadTexture(grassImagePath, false, 0, 0, true, true);
+        ObjectModel grassObjectModel = new ObjectModel(grassRawModel, grassTextureModel);
+
         // Dragon stuff
-        RawModel dragonRawModel = new ObjLoader().loadObjModel(dragonObjPath, loader);
+        ModelData data = OBJFileLoader.loadOBJ(dragonObjPath);
+        RawModel dragonRawModel = loader.loadToVao(data.getVertices(), data.getIndices(), data.getTextureCoords(), data.getNormals());new ObjLoader().loadObjModel(dragonObjPath, loader);
         TextureModel drgaonTextureModel = loader.loadTexture(redAlphaImagePath, false);
         ObjectModel dragonObjectModel = new ObjectModel(dragonRawModel, drgaonTextureModel);
 
         // Terrain stuff
-        TextureModel grassTexture = loader.loadTexture(grassImagePath, true, 0, 0);
+        TextureModel grassTexture = loader.loadTexture(terrainGrassImagePath, true, 0, 0);
 
         // Fern stuff
         RawModel fernRawModel = new ObjLoader().loadObjModel(fernObj, loader);
@@ -61,6 +69,7 @@ public class MainGameLoop {
         generateEntities(treeObjectModel, treeScale, defaultCount);
         generateEntities(fernObjectModel, fernScale, defaultCount);
         generateEntities(lowPolyTreeObject, lowPolyTreeScale, defaultCount);
+        generateEntities(grassObjectModel, 1, defaultCount);
 
         entities.add(new Entity(dragonObjectModel, new Vector3f(15, 1, -100), new Vector3f(), 1));
 

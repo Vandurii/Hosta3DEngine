@@ -2,7 +2,7 @@ package main.terrains;
 
 import main.models.RawModel;
 import main.renderEngine.Loader;
-import main.textures.TextureModel;
+import main.models.TextureModel;
 
 public class grassTerrain {
     float x;

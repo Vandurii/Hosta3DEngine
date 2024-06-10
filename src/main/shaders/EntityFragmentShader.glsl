@@ -1,9 +1,12 @@
 #version 330 core // 400
 
 in vec2 fTexCords;
-in vec3 surfaceNormal;
+in vec3 fNormals;
 in vec3 toLightVector;
 in vec3 toCameraVector;
+
+//Fog
+in float visibility;
 
 out vec4 outColor;
 
@@ -13,13 +16,16 @@ uniform vec3 lightColor;
 uniform float shineDamper;
 uniform float reflectivity;
 
+//Fog
+uniform vec4 skyColor;
+
 void main(){
     vec4 texColor = texture(textureSampler, fTexCords);
     if(texColor.a < 0.5){
         discard;
     }
 
-    vec3 unitNormal = normalize(surfaceNormal);
+    vec3 unitNormal = normalize(fNormals);
     vec3 unitLightVector = normalize(toLightVector);
 
     float nDot = dot(unitNormal, unitLightVector);
@@ -37,6 +43,9 @@ void main(){
     vec3 finalSpecular = dampedFactor * reflectivity *  lightColor;
 
     outColor = vec4(diffuse, 0) * texColor + vec4(finalSpecular, 1);
+
+    // Fog
+    outColor = mix(skyColor, outColor, visibility);
 }
 
 

@@ -4,11 +4,12 @@ import main.entities.Camera;
 import main.entities.Entity;
 import main.entities.Light;
 import main.models.ObjectModel;
-import main.shaders.StaticShader;
+import main.shaders.EntityShader;
 import main.shaders.TerrainShader;
 import main.terrains.grassTerrain;
 import main.tollbox.Maths;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 public class MasterRenderer {
     private Matrix4f projectionMatrix;
 
-    private StaticShader shader;
+    private EntityShader shader;
     private EntityRenderer entityRenderer;
     private Map<ObjectModel, List<Entity>> entities;
 
@@ -35,7 +36,7 @@ public class MasterRenderer {
 
         this.projectionMatrix = createProjectionMatrix();
 
-        this.shader = new StaticShader();
+        this.shader = new EntityShader();
         this.entityRenderer = new EntityRenderer(shader, projectionMatrix);
         this.entities = new HashMap<>();
 
@@ -47,16 +48,18 @@ public class MasterRenderer {
     public void render(Light light, Camera camera){
         prepare();
         shader.start();
-        shader.uploadValue("lightColor", light.getColor());
-        shader.uploadValue("lightPos", light.getPosition());
-        shader.uploadValue("viewMatrix", Maths.createViewMatrix(camera));
+        shader.uploadValue(lightColorID, light.getColor());
+        shader.uploadValue(skyColorID, clearColor);
+        shader.uploadValue(lightPositionID, light.getPosition());
+        shader.uploadValue(viewID, Maths.createViewMatrix(camera));
         entityRenderer.render(entities);
         shader.stop();
 
         terrainShader.start();
-        terrainShader.uploadValue("lightColor", light.getColor());
-        terrainShader.uploadValue("lightPos", light.getPosition());
-        terrainShader.uploadValue("viewMatrix", Maths.createViewMatrix(camera));
+        terrainShader.uploadValue(skyColorID, clearColor);
+        terrainShader.uploadValue(lightColorID, light.getColor());
+        terrainShader.uploadValue(lightPositionID, light.getPosition());
+        terrainShader.uploadValue(viewID, Maths.createViewMatrix(camera));
         terrainRenderer.render(grassTerrainList);
         terrainShader.stop();
 

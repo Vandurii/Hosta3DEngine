@@ -5,7 +5,14 @@ in vec3 surfaceNormal;
 in vec3 toLightVector;
 in vec3 toCameraVector;
 
+// Fog
+in float visibility;
+
 out vec4 outColor;
+
+
+//Fog
+uniform vec4 skyColor;
 
 uniform sampler2D textureSampler;
 uniform vec3 lightColor;
@@ -32,6 +39,9 @@ void main(){
     vec3 finalSpecular = dampedFactor * reflectivity *  lightColor;
 
     outColor = vec4(diffuse, 0) * texture(textureSampler, fTexCords) + vec4(finalSpecular, 1);
+
+    //Fog
+    outColor = mix(skyColor, outColor, visibility);
 }
 
 

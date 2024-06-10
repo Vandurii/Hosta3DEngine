@@ -1,7 +1,7 @@
 package main.renderEngine;
 
 import main.models.RawModel;
-import main.textures.TextureModel;
+import main.models.TextureModel;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -18,13 +18,16 @@ public class Loader {
     private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
+    private static int attribIndex;
+
     public RawModel loadToVao(float[] vertices, int[] indices, float[] texCords, float[] normals){
         int vaoID = createVao();
         bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, vertices, 3);
-        storeDataInAttributeList(1, texCords, 2);
-        storeDataInAttributeList(2, normals, 3);
+        storeDataInAttributeList(vertices, 3);
+        storeDataInAttributeList(texCords, 2);
+        storeDataInAttributeList(normals, 3);
         unbindVao();
+        resetAttribIndex();
 
         return new RawModel(vaoID, indices.length);
     }
@@ -65,13 +68,12 @@ public class Loader {
         return textureModel;
     }
 
-    public void storeDataInAttributeList(int attribNumber, float[] data, int size){
+    public void storeDataInAttributeList(float[] data, int size){
         int vboID = glGenBuffers();
         vbos.add(vboID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        FloatBuffer floatBuffer = storeDataInFloatBuffer(data);
-        glBufferData(GL_ARRAY_BUFFER, floatBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attribNumber, size, GL_FLOAT, false, 0, 0);
+        glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+        glVertexAttribPointer(attribIndex++, size, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -79,24 +81,11 @@ public class Loader {
         int vboID = glGenBuffers();
         vbos.add(vboID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboID);
-        IntBuffer intBuffer = storeDataInIntBuffer(indices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, intBuffer, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
     }
 
-    public FloatBuffer storeDataInFloatBuffer(float[] data){
-        FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(data.length);
-        floatBuffer.put(data);
-        floatBuffer.flip();
-
-        return floatBuffer;
-    }
-
-    public IntBuffer storeDataInIntBuffer(int[] indices){
-        IntBuffer intBuffer = BufferUtils.createIntBuffer(indices.length);
-        intBuffer.put(indices);
-        intBuffer.flip();
-
-        return intBuffer;
+    public void resetAttribIndex(){
+        attribIndex = 0;
     }
 
     public void unbindVao(){

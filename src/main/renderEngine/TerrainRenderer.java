@@ -3,14 +3,14 @@ package main.renderEngine;
 import main.models.RawModel;
 import main.shaders.TerrainShader;
 import main.terrains.grassTerrain;
-import main.textures.TextureModel;
+import main.models.TextureModel;
 import main.tollbox.Maths;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.List;
 
-import static main.Configuration.terrainYVal;
+import static main.Configuration.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -23,7 +23,7 @@ public class TerrainRenderer {
     public TerrainRenderer(TerrainShader terrainShader, Matrix4f projectionMatrix){
         this.terrainShader = terrainShader;
         terrainShader.start();
-        terrainShader.uploadValue("projectionMatrix", projectionMatrix);
+        terrainShader.uploadValue(projectionID, projectionMatrix);
         terrainShader.stop();
     }
 
@@ -44,8 +44,8 @@ public class TerrainRenderer {
         glEnableVertexAttribArray(2);
 
         TextureModel textureModel = grassTerrain.getTextureModel();
-        terrainShader.uploadValue("shineDamper", textureModel.getShineDamper());
-        terrainShader.uploadValue("reflectivity", textureModel.getReflectivity());
+        terrainShader.uploadValue(shineDamperID, textureModel.getShineDamper());
+        terrainShader.uploadValue(reflectivityID, textureModel.getReflectivity());
 
         glActiveTexture(0);
         glBindTexture(GL_TEXTURE_2D, textureModel.getTexID());
@@ -60,6 +60,6 @@ public class TerrainRenderer {
 
     public void loadModelMatrix(grassTerrain grassTerrain) {
         Matrix4f transMatrix = Maths.createTransformMatrix(new Vector3f(grassTerrain.getX(), terrainYVal, grassTerrain.getZ()), new Vector3f(0), 1);
-        terrainShader.uploadValue("transMatrix", transMatrix);
+        terrainShader.uploadValue(transformationID, transMatrix);
     }
 }

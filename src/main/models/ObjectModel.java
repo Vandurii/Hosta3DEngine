@@ -1,7 +1,5 @@
 package main.models;
 
-import main.textures.TextureModel;
-
 public class ObjectModel {
     private RawModel rawModel;
     private TextureModel modelTexture;

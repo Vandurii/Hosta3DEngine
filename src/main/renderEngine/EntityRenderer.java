@@ -3,8 +3,8 @@ package main.renderEngine;
 import main.entities.Entity;
 import main.models.RawModel;
 import main.models.ObjectModel;
-import main.shaders.StaticShader;
-import main.textures.TextureModel;
+import main.shaders.EntityShader;
+import main.models.TextureModel;
 import main.tollbox.Maths;
 import org.joml.Matrix4f;
 
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import static main.Configuration.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -19,12 +20,12 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class EntityRenderer {
-    private StaticShader shader;
+    private EntityShader shader;
 
-    public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix){
+    public EntityRenderer(EntityShader shader, Matrix4f projectionMatrix){
         this.shader = shader;
         shader.start();
-        shader.uploadValue("projectionMatrix", projectionMatrix);
+        shader.uploadValue(projectionID, projectionMatrix);
         shader.stop();
     }
 
@@ -54,9 +55,9 @@ public class EntityRenderer {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        shader.uploadValue("hasFakeLightning", textureModel.hasFakeLightning());
-        shader.uploadValue("shineDamper", textureModel.getShineDamper());
-        shader.uploadValue("reflectivity", textureModel.getReflectivity());
+        shader.uploadValue(fakeLightningID, textureModel.hasFakeLightning());
+        shader.uploadValue(shineDamperID, textureModel.getShineDamper());
+        shader.uploadValue(reflectivityID, textureModel.getReflectivity());
 
         glActiveTexture(0);
         glBindTexture(GL_TEXTURE_2D, textureModel.getTexID());
@@ -73,6 +74,6 @@ public class EntityRenderer {
 
     public void prepareInstance(Entity entity) {
         Matrix4f transMatrix = Maths.createTransformMatrix(entity.getPosition(), entity.getRotation(), entity.getScale());
-        shader.uploadValue("transMatrix", transMatrix);
+        shader.uploadValue(transformationID, transMatrix);
     }
 }
