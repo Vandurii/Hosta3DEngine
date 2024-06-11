@@ -5,9 +5,11 @@ import org.lwjgl.BufferUtils;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static main.Configuration.defaultReflectivity;
-import static main.Configuration.defaultShineDamper;
+import static main.Configuration.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
+import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
 
 public class TextureModel {
@@ -64,14 +66,24 @@ public class TextureModel {
 
 
     private void create(){
+
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+
         texID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texID);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // GL NEAREST BOTH OF THEM // GL_LINEAR
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        if(!filePath.equals(lowPolyTreeImagePath)) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f);
+       }else{
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        }
 
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);

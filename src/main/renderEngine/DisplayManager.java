@@ -1,6 +1,7 @@
 package main.renderEngine;
 
 import main.controller.KeyListener;
+import main.controller.MouseListener;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -44,6 +45,9 @@ public class DisplayManager {
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, KeyListener::keyCallback);
+        glfwSetScrollCallback(window, MouseListener::scrollCallback);
+        glfwSetCursorPosCallback(window, MouseListener::cursorPositionCallback);
+        glfwSetMouseButtonCallback(window, MouseListener::mouseButtonCallback);
 
 
         // Get the thread stack and push a new frame

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static main.Configuration.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -59,7 +60,7 @@ public class EntityRenderer {
         shader.uploadValue(shineDamperID, textureModel.getShineDamper());
         shader.uploadValue(reflectivityID, textureModel.getReflectivity());
 
-        glActiveTexture(0);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureModel.getTexID());
     }
 

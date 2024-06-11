@@ -1,4 +1,4 @@
-#version 330 core // 400
+#version 400
 
 in vec2 fTexCords;
 in vec3 surfaceNormal;
@@ -14,13 +14,31 @@ out vec4 outColor;
 //Fog
 uniform vec4 skyColor;
 
-uniform sampler2D textureSampler;
+// terrain
+uniform sampler2D backgroundTexture;
+uniform sampler2D rTexture;
+uniform sampler2D gTexture;
+uniform sampler2D bTexture;
+uniform sampler2D blendMap;
+
 uniform vec3 lightColor;
 
 uniform float shineDamper;
 uniform float reflectivity;
 
 void main(){
+    // terrain
+    vec4 blendMapColor = texture(blendMap, fTexCords);
+    float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
+    vec2 tiledCords = fTexCords * 40;
+
+    vec4 backgroundTextureColor = texture(backgroundTexture, tiledCords) * backTextureAmount;
+    vec4 rTextureColor = texture(rTexture, tiledCords) * blendMapColor.r;
+    vec4 bTextureColor = texture(gTexture, tiledCords) * blendMapColor.g;
+    vec4 gTextureColor = texture(bTexture, tiledCords) * blendMapColor.b;
+    vec4 totalColor = backgroundTextureColor + rTextureColor + bTextureColor + gTextureColor;
+
+
     vec3 unitNormal = normalize(surfaceNormal);
     vec3 unitLightVector = normalize(toLightVector);
 
@@ -38,7 +56,7 @@ void main(){
     float dampedFactor = pow(specularFactor, shineDamper);
     vec3 finalSpecular = dampedFactor * reflectivity *  lightColor;
 
-    outColor = vec4(diffuse, 0) * texture(textureSampler, fTexCords) + vec4(finalSpecular, 1);
+    outColor = vec4(diffuse, 0) * totalColor + vec4(finalSpecular, 1);
 
     //Fog
     outColor = mix(skyColor, outColor, visibility);

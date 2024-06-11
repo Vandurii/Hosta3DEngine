@@ -3,21 +3,25 @@ package main.terrains;
 import main.models.RawModel;
 import main.renderEngine.Loader;
 import main.models.TextureModel;
+import main.textures.TerrainTexture;
+import main.textures.TerrainTexturePack;
 
-public class grassTerrain {
+public class Terrain {
     float x;
     float z;
 
     private float size;
     private int vertexCount;
     private RawModel rawModel;
-    private TextureModel textureModel;
+    private TerrainTexture blendMap;
+    private TerrainTexturePack terrainTexturePack;
 
-    public grassTerrain(int x, int z, Loader loader, TextureModel textureModel){
+    public Terrain(int x, int z, Loader loader, TerrainTexturePack terrainTexturePack, TerrainTexture blendMap){
         this.size = 800;
         this.vertexCount =128;
+        this.blendMap = blendMap;
         this.rawModel = generateTerrain(loader);
-        this.textureModel = textureModel;
+        this.terrainTexturePack = terrainTexturePack;
 
         this.x = x * size;
         this.z = z * size;
@@ -66,15 +70,19 @@ public class grassTerrain {
         return rawModel;
     }
 
-    public TextureModel getTextureModel() {
-        return textureModel;
-    }
-
     public float getX() {
         return x;
     }
 
     public float getZ() {
         return z;
+    }
+
+    public TerrainTexturePack getTerrainTexturePack() {
+        return terrainTexturePack;
+    }
+
+    public TerrainTexture getBlendMap() {
+        return blendMap;
     }
 }

@@ -14,11 +14,12 @@ public class Configuration {
     // Colors
     public static Vector4f skyBlue = new Vector4f(0.5f, 0.5f, 1f, 1);
     public static Vector4f grey = new Vector4f(0.2f, 0.2f, 0.2f, 1);
+    public static Vector4f fog = new Vector4f(0.7f, 0.7f, 0.7f, 1);
 
     // Window Settings
     public static final String WINDOW_TITLE = "Hosta";
-    public static final int WINDOW_WIDTH = 1280;
-    public static final int WINDOW_HEIGHT = 720;
+    public static final int WINDOW_WIDTH = 1920;
+    public static final int WINDOW_HEIGHT = 1080;
 
     // Shaders
     public static String entityFragmentShaderPath = Path.fromShader("EntityFragmentShader");
@@ -27,7 +28,7 @@ public class Configuration {
     public static String terrainVertexShaderPath = Path.fromShader("terrainVertexShader");
 
     // Background
-    public static final Vector4f clearColor = grey;
+    public static final Vector4f clearColor = skyBlue;
 
     // resources
     public static final String redAlphaImagePath = Path.fromRes("redAlpha.png");
@@ -38,6 +39,12 @@ public class Configuration {
     public static final String grassImagePath = Path.fromTexture("grassTexture.png");
     public static final String lowPolyTreeImagePath = Path.fromTexture("lowPolyTree.png");
     public static final String fernImagePath = Path.fromTexture("fern.png");
+
+    public static final String grassSecondTerrainImagePath = Path.fromTexture("terrainGrassSecond.png");
+    public static final String mudTerrainImagePath = Path.fromTexture("mud.png");
+    public static final String grassFlowerTerrainImagePath = Path.fromTexture("grassFlowers.png");
+    public static final String pathTerrainImagePath = Path.fromTexture("path.png");
+    public static final String blendMapImagePath = Path.fromTexture("blendMap.png");
 
     // Objects
     public static final String dragonObjPath = Path.fromObject("dragon");
@@ -58,7 +65,7 @@ public class Configuration {
 
     // Light
     public static Vector3f lightColor = (new Vector3f(1, 1, 1));
-    public static Vector3f lightPosition = (new Vector3f(100, 0, 0));
+    public static Vector3f lightPosition = (new Vector3f(0, 50, 0));
 
     public static float defaultReflectivity = 1;
     public static float defaultShineDamper = 10;
@@ -67,7 +74,7 @@ public class Configuration {
     public static int xMin = -500;
     public static int xMax = 500;
 
-    public static int zMin = -200;
+    public static int zMin = -600;
     public static int zMax = 0;
 
     public static float treeScale = 3;
@@ -75,7 +82,6 @@ public class Configuration {
     public static float lowPolyTreeScale = 0.45f;
 
     // shader
-
     public static String positionID = "vPos";
     public static String normalsID = "vNormals";
     public static String texCordsID = "vTexCords";
@@ -93,5 +99,19 @@ public class Configuration {
     public static String fakeLightningID = "fakeLightning";
 
     public static String skyColorID = "skyColor";
+
+    public static String backgroundTextureID = "backgroundTexture";
+    public static String rTextureID = "rTexture";
+    public static String gTextureID = "gTexture";
+    public static String bTextureID = "bTexture";
+    public static String blendTextureID = "blendMap";
+
+    // PlayerController
+    public static float runSpeed = 20;
+    public static float turnSpeed = 160;
+    public static float gravity = -50;
+    public static float jumpPower = 30;
+
+
 
 }

@@ -1,11 +1,11 @@
 package main.controller;
 
-import main.entities.Camera;
-import main.entities.Direction;
+import main.entities.Player;
 
-import java.util.PrimitiveIterator;
-
-import static main.entities.Direction.*;
+import static main.Configuration.runSpeed;
+import static main.Configuration.turnSpeed;
+import static main.entities.Player.currentSpeed;
+import static main.entities.Player.currentTurnSpeed;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyController {
@@ -16,19 +16,27 @@ public class KeyController {
         this.keyboard = KeyListener.getInstance();
     }
 
-    public void update(){
-        if(keyboard.isKeyPressed(GLFW_KEY_UP)){
-            Camera.move(Up);
-        }else if(keyboard.isKeyPressed(GLFW_KEY_DOWN)){
-            Camera.move(Down);
-        }else if(keyboard.isKeyPressed(GLFW_KEY_RIGHT)){
-            Camera.move(Right);
-        }else if(keyboard.isKeyPressed(GLFW_KEY_LEFT)){
-            Camera.move(Left);
-        }else if(keyboard.isKeyPressed(GLFW_KEY_W)){
-            Camera.move(forward);
+    public void update(Player player){
+        // run
+        if(keyboard.isKeyPressed(GLFW_KEY_W)){
+            currentSpeed = runSpeed;
         }else if(keyboard.isKeyPressed(GLFW_KEY_S)){
-            Camera.move(backward);
+            currentSpeed = -runSpeed;
+        }else{
+            currentSpeed = 0;
+        }
+
+        // turn out
+        if(keyboard.isKeyPressed(GLFW_KEY_A)){
+            currentTurnSpeed = turnSpeed;
+        }else if(keyboard.isKeyPressed(GLFW_KEY_D)){
+            currentTurnSpeed = -turnSpeed;
+        }else{
+            currentTurnSpeed = 0;
+        }
+
+        if(keyboard.isKeyPressed(GLFW_KEY_SPACE)){
+            player.jump();
         }
     }
 }

@@ -1,4 +1,4 @@
-#version 330 core // 400
+#version 400
 
 in vec2 fTexCords;
 in vec3 fNormals;
@@ -29,7 +29,7 @@ void main(){
     vec3 unitLightVector = normalize(toLightVector);
 
     float nDot = dot(unitNormal, unitLightVector);
-    float brightness = max(nDot, 0.2f);
+    float brightness = max(nDot, 0.4);
 
     vec3 diffuse = brightness * lightColor;
 

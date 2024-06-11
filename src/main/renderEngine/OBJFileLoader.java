@@ -1,6 +1,5 @@
 package main.renderEngine;
 
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -15,7 +14,6 @@ import java.util.List;
 
 public class OBJFileLoader {
 
-    private static final String RES_LOC = "res/";
 
     public static ModelData loadOBJ(String objFileName) {
         FileReader isr = null;
@@ -80,7 +78,6 @@ public class OBJFileLoader {
         int[] indicesArray = convertIndicesListToArray(indices);
         ModelData data = new ModelData(verticesArray, texturesArray, normalsArray, indicesArray,
                 furthest);
-
         return data;
     }
 
@@ -160,4 +157,6 @@ public class OBJFileLoader {
             }
         }
     }
+
 }
+

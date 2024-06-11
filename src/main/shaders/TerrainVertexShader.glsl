@@ -1,4 +1,5 @@
-#version 330 core
+#version 400
+
 
 in vec3 vPos;
 in vec2 vTexCords;
@@ -24,7 +25,7 @@ void main(){
     vec4 positionRelativeToCam = view * worldPosition;
     gl_Position = projection * positionRelativeToCam;
 
-    fTexCords = vTexCords  * 40;
+    fTexCords = vTexCords;
 
     surfaceNormal = (transformation * vec4(vNormals, 0)).xyz;
     toLightVector = lightPos - worldPosition.xyz;
@@ -32,8 +33,8 @@ void main(){
     toCameraVector = (inverse (view) * vec4(0, 0, 0, 1)).xyz - worldPosition.xyz;
 
     // Fog
-    float density = 0.015;
-    float gradient = 1.0;
+    float density = 0.001;
+    float gradient = 1.5;
     float d = length(positionRelativeToCam);
 
     visibility = exp(-pow((d * density), gradient));

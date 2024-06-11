@@ -6,10 +6,9 @@ import main.entities.Light;
 import main.models.ObjectModel;
 import main.shaders.EntityShader;
 import main.shaders.TerrainShader;
-import main.terrains.grassTerrain;
+import main.terrains.Terrain;
 import main.tollbox.Maths;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class MasterRenderer {
 
     private TerrainShader terrainShader;
     private TerrainRenderer terrainRenderer;
-    private List<grassTerrain> grassTerrainList;
+    private List<Terrain> terrainList;
 
     public MasterRenderer(){
         enableCulling();
@@ -42,7 +41,7 @@ public class MasterRenderer {
 
         this.terrainShader = new TerrainShader();
         this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
-        this.grassTerrainList = new ArrayList<>();
+        this.terrainList = new ArrayList<>();
     }
 
     public void render(Light light, Camera camera){
@@ -60,10 +59,10 @@ public class MasterRenderer {
         terrainShader.uploadValue(lightColorID, light.getColor());
         terrainShader.uploadValue(lightPositionID, light.getPosition());
         terrainShader.uploadValue(viewID, Maths.createViewMatrix(camera));
-        terrainRenderer.render(grassTerrainList);
+        terrainRenderer.render(terrainList);
         terrainShader.stop();
 
-        grassTerrainList.clear();
+        terrainList.clear();
         entities.clear();
     }
 
@@ -82,8 +81,8 @@ public class MasterRenderer {
         glClearColor(clearColor.x, clearColor.y, clearColor.z,1);
     }
 
-    public void addTerrain(grassTerrain grassTerrain){
-        grassTerrainList.add(grassTerrain);
+    public void addTerrain(Terrain Terrain){
+        terrainList.add(Terrain);
     }
 
     public void cleanUp(){

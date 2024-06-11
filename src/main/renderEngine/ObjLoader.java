@@ -60,6 +60,8 @@ public class ObjLoader {
                     verticesList.add(val1);
                     verticesList.add(val2);
                     verticesList.add(val3);
+
+                    // make vec 3 instead that
                 } else if (line.startsWith(cordsID)) {
                     val1 = Float.parseFloat(values[1]);
                     val2 = Float.parseFloat(values[2]);
