@@ -1,6 +1,7 @@
-package main.textures;
+package main.texture;
 
 public class TerrainTexturePack {
+
     private TerrainTexture backgroundTexture;
     private TerrainTexture rTexture;
     private TerrainTexture gTexture;
@@ -17,15 +18,15 @@ public class TerrainTexturePack {
         return backgroundTexture;
     }
 
-    public TerrainTexture getRTexture() {
+    public TerrainTexture getrTexture() {
         return rTexture;
     }
 
-    public TerrainTexture getGTexture() {
+    public TerrainTexture getgTexture() {
         return gTexture;
     }
 
-    public TerrainTexture getBTexture() {
+    public TerrainTexture getbTexture() {
         return bTexture;
     }
 }

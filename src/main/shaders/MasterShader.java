@@ -3,8 +3,6 @@ package main.shaders;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 
-import javax.swing.*;
-import java.io.IOException;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
@@ -13,58 +11,66 @@ import java.nio.file.Path;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL40.glUniformMatrix4dv;
 
-public abstract class ShaderProgram {
-
-    private int programID;
+public abstract class MasterShader {
     private int vertexShaderID;
     private int fragmentShaderID;
+    private int shaderProgramID;
 
-    public ShaderProgram(String vertexFile, String fragmentFile){
-        vertexShaderID = loadShader(vertexFile, GL_VERTEX_SHADER);
-        fragmentShaderID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
-        programID = glCreateProgram();
-        glAttachShader(programID, vertexShaderID);
-        glAttachShader(programID, fragmentShaderID);
+    public MasterShader(String vertexSource, String fragmentSource){
+        // Create shader program.
+        vertexShaderID = createShader(vertexSource, GL_VERTEX_SHADER);
+        fragmentShaderID = createShader(fragmentSource, GL_FRAGMENT_SHADER);
+        shaderProgramID = glCreateProgram();
+        glAttachShader(shaderProgramID, vertexShaderID);
+        glAttachShader(shaderProgramID, fragmentShaderID);
         bindAttributes();
-        glLinkProgram(programID);
-        glValidateProgram(programID);
+        glLinkProgram(shaderProgramID);
+        glValidateProgram(shaderProgramID);
     }
 
-    protected abstract void bindAttributes();
+    public abstract void bindAttributes();
 
-    protected void bindAttribute(int attribute, String variableName){
-        glBindAttribLocation(programID, attribute, variableName);
+    public void bindAttribute(int index, String name){
+        glBindAttribLocation(shaderProgramID, index, name);
     }
 
-    public void start(){
-        glUseProgram(programID);
-    }
-
-    public int loadShader(String file, int type){
+    public int createShader(String source, int type){
         String shaderSource = "";
 
-        try {
-            shaderSource = new String(Files.readAllBytes(Path.of(file)));
-        }catch (IOException exception){
-            exception.printStackTrace();;
+        // Get Shader content from file, print message and exit program if that can't be done.
+        try{
+            shaderSource = new String(Files.readAllBytes(Path.of(source)));
+        }catch (Exception e){
+            System.out.println("Can't read file: " + source);
+            e.printStackTrace();
             System.exit(-1);
         }
 
+        // Create shader.
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderSource);
         glCompileShader(shaderID);
 
+        // Print error info and exit program if compile process fail.
         if(glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE){
             System.out.println(glGetShaderInfoLog(shaderID, 500));
-            System.out.println(file);
+            System.out.println(source);
             System.exit(-1);
         }
 
         return shaderID;
     }
 
+    public void start(){
+        glUseProgram(shaderProgramID);
+    }
+
+    public void stop(){
+        glUseProgram(0);
+    }
+
     public <T> void uploadValue(String varName, T type){
-        int varLocation = glGetUniformLocation(programID, varName);
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
 
         if(type instanceof Matrix4f) {
             FloatBuffer matBuff = BufferUtils.createFloatBuffer(16);
@@ -97,18 +103,5 @@ public abstract class ShaderProgram {
         }else{
             throw new IllegalStateException("Unexpected value in shader class uploadValue method. --> type:" + type.getClass().getSimpleName() );
         }
-    }
-
-    public void stop(){
-        glUseProgram(0);
-    }
-
-    public void cleanUp(){
-        stop();
-        glDetachShader(programID, vertexShaderID);
-        glDetachShader(programID, fragmentShaderID);
-        glDeleteShader(vertexShaderID);
-        glDeleteShader(fragmentShaderID);
-        glDeleteProgram(programID);
     }
 }

@@ -1,7 +1,7 @@
-package main.renderEngine;
+package main.renderer;
 
-import main.controller.KeyListener;
-import main.controller.MouseListener;
+import main.controllers.KeyListener;
+import main.controllers.MouseListener;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -12,18 +12,19 @@ import java.nio.*;
 import static main.Configuration.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class DisplayManager {
 
+public class Window {
     // The window handle
     private static long window;
+    private static Window instance;
 
-    public static void createDisplay() {
+    private Window(){};
+
+    public void create() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-
 
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -39,16 +40,15 @@ public class DisplayManager {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, NULL, NULL);
+        window = glfwCreateWindow(WINDOW_WIDTH,  WINDOW_HEIGHT, WINDOW_TITLE, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, KeyListener::keyCallback);
-        glfwSetScrollCallback(window, MouseListener::scrollCallback);
-        glfwSetCursorPosCallback(window, MouseListener::cursorPositionCallback);
-        glfwSetMouseButtonCallback(window, MouseListener::mouseButtonCallback);
-
+        glfwSetMouseButtonCallback(window, MouseListener:: mouseButtonCallback);
+        glfwSetCursorPosCallback(window, MouseListener:: cursorPositionCallback);
+        glfwSetScrollCallback(window, MouseListener:: scrollCallback);
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -64,8 +64,8 @@ public class DisplayManager {
             // Center the window
             glfwSetWindowPos(
                     window,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
+                    (vidmode.width() - pWidth.get(0)) / 2 + shiftXAxis,
+                    (vidmode.height() - pHeight.get(0)) / 2 + shiftYAxis
             );
         } // the stack frame is popped automatically
 
@@ -83,15 +83,9 @@ public class DisplayManager {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
-
-        // Set the clear color
-        glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
     }
 
-    public static void updateDisplay() {
+    public void update() {
         glfwSwapBuffers(window); // swap the color buffers
 
         // Poll for window events. The key callback above will only be
@@ -99,7 +93,7 @@ public class DisplayManager {
         glfwPollEvents();
     }
 
-    public static void closeDisplay(){
+    public void destroy() {
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -109,7 +103,14 @@ public class DisplayManager {
         glfwSetErrorCallback(null).free();
     }
 
-    public static long getGLFW(){
-        return window;
+    public long getWindowPtr(){
+        return  window;
+    }
+
+    public static Window getInstance(){
+        // return instance, initialize it when it isn't initialized.
+        if(instance == null) instance = new Window();
+
+        return instance;
     }
 }

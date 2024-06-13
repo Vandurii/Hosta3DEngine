@@ -1,44 +1,57 @@
 package main.entities;
 
 import main.models.ObjectModel;
+import main.terrains.Terrain;
 import org.joml.Vector3f;
 
 import static main.Configuration.*;
 
 public class Player extends Entity{
-
     public static float currentSpeed;
-    public static float currentTurnSpeed;
-    public static float terrainHeight = terrainYVal;
-    public static float upwardsSpeed;
+    public static float currentTurnAngle;
+    public static float upwardSpeed;
 
-    public Player(ObjectModel objectModel, Vector3f position, Vector3f rotation, float scale) {
+    public static float terrainHeight;
+    private Terrain terrain;
+
+    public Player(ObjectModel objectModel, Vector3f position, Vector3f rotation, float scale){
         super(objectModel, position, rotation, scale);
     }
 
-    public void move(float dt){
-        // turn out
-        increaseRotation(new Vector3f(0, currentTurnSpeed * dt, 0));
+    public void update(float dt, Terrain terrain){
+        this.terrain = terrain;
+        //System.out.println(String.format("x: %s y: %s", getPosition().x, getPosition().z));;
+         terrainHeight = terrain.getHeightOfTerrain(getPosition().x, getPosition().z);
 
-        // run
         float distance = currentSpeed * dt;
-        float dx = (float) (distance * Math.sin(Math.toRadians(getRotation().y)));
-        float dz = (float) (distance * Math.cos(Math.toRadians(getRotation().y)));
+        double rotY = Math.toRadians(getRotation().y);
+        float dx = (float) (distance * Math.sin(rotY));
+        float dz = (float) (distance * Math.cos(rotY));
         increasePosition(new Vector3f(dx, 0, dz));
 
-        // jump
-        upwardsSpeed += gravity * dt;
-        increasePosition(new Vector3f(0, upwardsSpeed * dt, 0));
+        increaseRotation(new Vector3f(0, currentTurnAngle * dt, 0));
 
-        if(getPosition().y <= terrainHeight){
-            setPosition(new Vector3f(getPosition().x, terrainHeight, getPosition().z));
-            upwardsSpeed = 0;
+        // Decrease y value if the value is greater the 0.
+        if(upwardSpeed != 0) {
+            System.out.println(upwardSpeed);
+            increasePosition(new Vector3f(0, upwardSpeed, 0));
+
+            // Set y val to 0, if it is less, set upward val to 0
+            if(getPosition().y <= terrainHeight){
+                getPosition().y = terrainHeight;
+                upwardSpeed = 0;
+            }
+            upwardSpeed += gravity * dt;
+        }else if(getPosition().y >= terrainHeight){
+            upwardSpeed += gravity * dt;
         }
     }
 
     public void jump(){
-        if(getPosition().y <= terrainHeight){
-            upwardsSpeed = jumpPower;
+        if(getPosition().y <= terrain.getHeightOfTerrain(getPosition().x, getPosition().z)){
+            upwardSpeed = jumpPower;
+        }else{
+            System.out.println("dont");
         }
     }
 }

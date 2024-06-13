@@ -2,18 +2,18 @@ package main.models;
 
 public class ObjectModel {
     private RawModel rawModel;
-    private TextureModel modelTexture;
+    private TextureModel textureModel;
 
-    public ObjectModel(RawModel rawModel, TextureModel modelTexture){
+    public ObjectModel(RawModel rawModel, TextureModel textureModel){
         this.rawModel = rawModel;
-        this.modelTexture = modelTexture;
+        this.textureModel = textureModel;
     }
 
     public RawModel getRawModel() {
         return rawModel;
     }
 
-    public TextureModel getModelTexture() {
-        return modelTexture;
+    public TextureModel getTextureModel() {
+        return textureModel;
     }
 }

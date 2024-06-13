@@ -1,6 +1,6 @@
 package main;
 
-import main.tollbox.Path;
+import main.toolbox.Path;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -9,7 +9,7 @@ public class Configuration {
     public static String resPrefix = "res/";
     public static String texturePrefix = "res/textures/";
     public static String objectPrefix = "res/objects/";
-    public static String shaderPrefix = "src/main/shaders/";
+    public static String shaderPrefix = "res/shaders/";
 
     // Colors
     public static Vector4f skyBlue = new Vector4f(0.5f, 0.5f, 1f, 1);
@@ -18,8 +18,11 @@ public class Configuration {
 
     // Window Settings
     public static final String WINDOW_TITLE = "Hosta";
-    public static final int WINDOW_WIDTH = 1920;
-    public static final int WINDOW_HEIGHT = 1080;
+    public static final int WINDOW_WIDTH = 1140;
+    public static final int WINDOW_HEIGHT = 810;
+
+    public static int shiftXAxis = 1750;
+    public static int shiftYAxis = -50;
 
     // Shaders
     public static String entityFragmentShaderPath = Path.fromShader("EntityFragmentShader");
@@ -39,6 +42,7 @@ public class Configuration {
     public static final String grassImagePath = Path.fromTexture("grassTexture.png");
     public static final String lowPolyTreeImagePath = Path.fromTexture("lowPolyTree.png");
     public static final String fernImagePath = Path.fromTexture("fern.png");
+    public static final String heightMapPath = Path.fromTexture("heightMap.png");
 
     public static final String grassSecondTerrainImagePath = Path.fromTexture("terrainGrassSecond.png");
     public static final String mudTerrainImagePath = Path.fromTexture("mud.png");
@@ -60,12 +64,16 @@ public class Configuration {
     public static float NEAR_PLAN = 0.1f;
     public static float FAR_PLAN = 1000;
 
+    // Camera
+    public static float defaultPitch = 10;
+    public static float defaultDistanceFromPlayer = 50;
+
     // Terrain
-    public static int terrainYVal = -3;
+    public static int terrainYVal = 0;
 
     // Light
     public static Vector3f lightColor = (new Vector3f(1, 1, 1));
-    public static Vector3f lightPosition = (new Vector3f(0, 50, 0));
+    public static Vector3f lightPosition = (new Vector3f(10, 10, 0));
 
     public static float defaultReflectivity = 1;
     public static float defaultShineDamper = 10;
@@ -107,11 +115,8 @@ public class Configuration {
     public static String blendTextureID = "blendMap";
 
     // PlayerController
-    public static float runSpeed = 20;
-    public static float turnSpeed = 160;
+    public static float runSpeed = 200;
+    public static float turnAngle = 160;
     public static float gravity = -50;
     public static float jumpPower = 30;
-
-
-
 }

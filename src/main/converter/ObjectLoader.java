@@ -1,5 +1,7 @@
-package main.renderEngine;
+package main.converter;
 
+import main.converter.ModelData;
+import main.converter.Vertex;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class OBJFileLoader {
+public class ObjectLoader {
 
 
     public static ModelData loadOBJ(String objFileName) {

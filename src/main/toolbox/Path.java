@@ -1,4 +1,4 @@
-package main.tollbox;
+package main.toolbox;
 
 import main.Configuration;
 

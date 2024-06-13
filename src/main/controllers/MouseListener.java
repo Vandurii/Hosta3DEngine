@@ -1,8 +1,6 @@
-package main.controller;
+package main.controllers;
 
 import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -51,13 +49,19 @@ public class MouseListener {
         scroll = (float) yOffset;
     }
 
-
     public boolean isButtonPressed(int buttonCode) {
         return buttonPressed[buttonCode];
     }
 
     public boolean isMouseDragging(){
         return isMouseDragged;
+    }
+
+
+    public static MouseListener getInstance(){
+        if(instance == null) instance = new MouseListener();
+
+        return instance;
     }
 
     public double getScroll() {
@@ -75,13 +79,7 @@ public class MouseListener {
         return y;
     }
 
-    public static MouseListener getInstance(){
-        if(instance == null) instance = new MouseListener();
-
-        return instance;
-    }
-
-    public Vector2d getMouse(){
+    public Vector2d getMousePos(){
         return  new Vector2d(getX(), getY());
     }
 }

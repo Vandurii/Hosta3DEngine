@@ -3,11 +3,13 @@ package main.entities;
 import main.models.ObjectModel;
 import org.joml.Vector3f;
 
+import javax.swing.text.Position;
+
 public class Entity {
-    private ObjectModel objectModel;
+    private float scale;
     private Vector3f position;
     private Vector3f rotation;
-    private float scale;
+    private ObjectModel objectModel;
 
     public Entity(ObjectModel objectModel, Vector3f position, Vector3f rotation, float scale){
         this.objectModel = objectModel;
@@ -16,52 +18,33 @@ public class Entity {
         this.scale = scale;
     }
 
-    public void increasePosition(Vector3f value){
-        increase(position, value);
-    }
-
-    public void decreasePosition(Vector3f value){
-        decrease(position, value);
-    }
-
-    public void increaseRotation(Vector3f value){
-        increase(rotation, value);
-    }
-
-    public void decreaseRotation(Vector3f value){
-        decrease(rotation, value);
-    }
-
-    public void increase(Vector3f source, Vector3f value){
-        source.x += value.x;
-        source.y += value.y;
-        source.z += value.z;
-    }
-
-    public void decrease(Vector3f source, Vector3f value){
-        source.x -= value.x;
-        source.y -= value.y;
-        source.z -= value.z;
-    }
-
-    public ObjectModel getTExtureRawModel() {
-        return objectModel;
-    }
-
-    public void TextureRawModel(ObjectModel objectModel) {
+    public Entity(ObjectModel objectModel){
         this.objectModel = objectModel;
+        this.position = new Vector3f();
+        this.rotation = new Vector3f();
+        this.scale = 1;
     }
 
-    public Vector3f getPosition() {
-        return position;
+    public void increasePosition(Vector3f val){
+        increase(position, val);
+    }
+
+    public void increaseRotation(Vector3f val){
+        increase(rotation, val);
+    }
+
+    private void increase(Vector3f target, Vector3f val){
+        target.x += val.x;
+        target.y += val.y;
+        target.z += val.z;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 
     public void setPosition(Vector3f position) {
         this.position = position;
-    }
-
-    public Vector3f getRotation() {
-        return rotation;
     }
 
     public void setRotation(Vector3f rotation) {
@@ -72,7 +55,15 @@ public class Entity {
         return scale;
     }
 
-    public void setScale(float scale) {
-        this.scale = scale;
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    public ObjectModel getObjectModel() {
+        return objectModel;
     }
 }

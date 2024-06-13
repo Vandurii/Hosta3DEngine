@@ -1,4 +1,5 @@
-package main.renderEngine;
+package main.converter;
+
 
 import main.models.RawModel;
 import org.joml.Vector2f;
@@ -8,8 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+public class ObjFileLoader {
 
-public class ObjLoader {
     private List<Float> verticesList;
     private List<Vector2f> cordsList;
     private List<Vector3f> normalsList;
@@ -27,7 +28,7 @@ public class ObjLoader {
     private int cordSize;
     private int normalSize;
 
-    public ObjLoader() {
+    public ObjFileLoader() {
         this.verticesID = "v ";
         this.cordsID = "vt ";
         this.normalsID = "vn ";
@@ -43,7 +44,7 @@ public class ObjLoader {
         this.indicesList = new ArrayList<>();
     }
 
-    public RawModel loadObjModel(String path, Loader loader) {
+    public RawModel loadObjModel(String path) {
         try (BufferedReader bufReader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = bufReader.readLine()) != null) {
@@ -101,7 +102,7 @@ public class ObjLoader {
             verticesArray[i] = verticesList.get(i);
         }
 
-        return loader.loadToVao(verticesArray, indicesArray, cordsArray, normalsArray);
+        return Loader.getInstance().loadToVao(verticesArray, indicesArray, cordsArray, normalsArray);
     }
 
     public void processVertex(String face){
@@ -127,4 +128,5 @@ public class ObjLoader {
         normalsArray[offset + 1] = thisNormal.y;
         normalsArray[offset + 2] = thisNormal.z;
     }
+
 }

@@ -7,14 +7,13 @@ import java.nio.IntBuffer;
 
 import static main.Configuration.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LEVEL;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
 
 public class TextureModel {
     private String filePath;
-    private int texID;
+    private int ID;
     private int width, height;
     private boolean flip;
 
@@ -67,23 +66,21 @@ public class TextureModel {
 
     private void create(){
 
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-
-        texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texID);
+        ID = glGenTextures();
+    //    glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, ID);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        if(!filePath.equals(lowPolyTreeImagePath)) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f);
-       }else{
+//       if(!filePath.equals(lowPolyTreeImagePath)) {
+//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f);
+//        }else{
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        }
+ //       }
 
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);
@@ -109,7 +106,6 @@ public class TextureModel {
         }
     }
 
-
     public int getWidth(){
         return width;
     }
@@ -118,8 +114,8 @@ public class TextureModel {
         return height;
     }
 
-    public int getTexID(){
-        return texID;
+    public int getID(){
+        return ID;
     }
 
     public String getFilePath(){
