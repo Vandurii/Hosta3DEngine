@@ -1,6 +1,6 @@
 #version 400
 // settings
-float minBrightness = 0.2;
+float minBrightness = 0.3;
 
 // from vertex
 in vec3 fPos;
@@ -36,6 +36,7 @@ void main(){
     float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
     vec2 tileCords = fTexCords * 40;
 
+    // terrain
     vec4 backgroundTextureColor = texture(backgroundTexture, tileCords) * backTextureAmount;
     vec4 rTextureColor = texture(rTexture, tileCords) * blendMapColor.r;
     vec4 gTextureColor = texture(gTexture, tileCords) * blendMapColor.g;
@@ -59,6 +60,6 @@ void main(){
     vec3 finalSpecular = dampedFactor * reflectivity * lightColor;
 
     // Out color.
-    outCol = vec4(diffuse, 0) * textureColor ;//+ vec4(finalSpecular, 1);
+    outCol = vec4(diffuse, 0) * textureColor; //+ vec4(finalSpecular, 1);
     outCol = mix(skyColor, outCol, visibility);
 }

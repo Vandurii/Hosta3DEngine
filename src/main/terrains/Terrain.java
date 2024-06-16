@@ -11,6 +11,8 @@ import org.joml.Vector3f;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Terrain {
 
@@ -46,48 +48,69 @@ public class Terrain {
             e.printStackTrace();
         }
 
-        int vertexCount = bufImage.getHeight();
-        heights = new float[vertexCount][vertexCount];
+        int posArgCount = 3;
+        int normalArgCount = 3;
+        int textCordArgCount = 2;
+        int indicesArgCount = 6;
 
-        int count = vertexCount * vertexCount;
-        float[] vertices = new float[count * 3];
-        float[] normals = new float[count * 3];
-        float[] textureCoords = new float[count*2];
-        int[] indices = new int[6*(vertexCount-1)*(vertexCount-1)];
-        int vertexPointer = 0;
-        for(int i=0;i<vertexCount;i++){
-            for(int j=0;j<vertexCount;j++){
-                vertices[vertexPointer*3] = (float)j/((float)vertexCount - 1) * size;
-                float height = getHeight(j, i, bufImage);
-                heights[j][i] = height;
-                vertices[vertexPointer*3+1] = height;
-                vertices[vertexPointer*3+2] = (float)i/((float)vertexCount - 1) * size;
-                Vector3f normal = calculateNormals(j, i, bufImage);
-                normals[vertexPointer*3] = normal.x;
-                normals[vertexPointer*3+1] = normal.y;
-                normals[vertexPointer*3+2] = normal.z;
-                textureCoords[vertexPointer*2] = (float)j/((float)vertexCount - 1);
-                textureCoords[vertexPointer*2+1] = (float)i/((float)vertexCount - 1);
-                vertexPointer++;
+        int triangleCountInRow = bufImage.getHeight();
+        heights = new float[triangleCountInRow][triangleCountInRow];
+
+        int totalTriangles = triangleCountInRow * triangleCountInRow;
+        float[] vertices = new float[totalTriangles * posArgCount];
+        float[] normals = new float[totalTriangles * normalArgCount];
+        float[] textureCords = new float[totalTriangles*textCordArgCount];
+
+        int index = 0;
+        for(int x = 0; x < triangleCountInRow; x++){
+            for(int z = 0;z < triangleCountInRow; z++){
+
+                int offset = index  * posArgCount;
+
+                float height = getHeight(z, x, bufImage);
+                heights[z][x] = height;
+
+                vertices[offset++] = (float)z/(triangleCountInRow - 1) * size;
+                vertices[offset++] = height;
+                vertices[offset] = (float)x/(triangleCountInRow - 1) * size;
+
+                offset = index * normalArgCount;
+                Vector3f normal = calculateNormals(z, x, bufImage);
+                normals[offset++] = normal.x;
+                normals[offset++] = normal.y;
+                normals[offset] = normal.z;
+
+                offset = index * textCordArgCount;
+                textureCords[offset++] = (float)z/(triangleCountInRow - 1);
+                textureCords[offset] = (float)x/(triangleCountInRow - 1);
+                index++;
             }
         }
+
+         index = 0;
         int pointer = 0;
-        for(int gz=0;gz<vertexCount-1;gz++){
-            for(int gx=0;gx<vertexCount-1;gx++){
-                int topLeft = (gz*vertexCount)+gx;
+        int[] indices = new int[indicesArgCount * (triangleCountInRow - 1) * (triangleCountInRow - 1)];
+        for(int x = 0; x < triangleCountInRow - 1; x++){
+            for(int z = 0; z < triangleCountInRow - 1; z++){
+
+                int topLeft = (x * triangleCountInRow)+z;
                 int topRight = topLeft + 1;
-                int bottomLeft = ((gz+1)*vertexCount)+gx;
+                int bottomLeft = ((x + 1) * triangleCountInRow)+z;
                 int bottomRight = bottomLeft + 1;
+
                 indices[pointer++] = topLeft;
                 indices[pointer++] = bottomLeft;
                 indices[pointer++] = topRight;
                 indices[pointer++] = topRight;
                 indices[pointer++] = bottomLeft;
                 indices[pointer++] = bottomRight;
+                index++;
             }
         }
-        return Loader.getInstance().loadToVao(vertices, indices, textureCoords, normals);
+
+        return Loader.getInstance().loadToVao(vertices, indices, textureCords, normals);
     }
+
 
     public float getHeightOfTerrain(float worldX, float worldZ){
             float terrainX = worldX - x;
@@ -170,3 +193,4 @@ public class Terrain {
         return heights;
     }
 }
+

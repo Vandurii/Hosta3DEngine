@@ -1,164 +1,156 @@
 package main.converter;
 
-import main.converter.ModelData;
-import main.converter.Vertex;
+import main.models.RawModel;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ObjectLoader {
+    static List<Vertex> verticesList = new ArrayList<>();
+    static List<Vector2f> cordsList = new ArrayList<>();
+    static List<Vector3f> normalsList = new ArrayList<>();
+    static List<Integer> indicesList = new ArrayList<>();
+
+    static String verticesID = "v ";
+    static String cordsID = "vt ";
+    static String normalsID = "vn ";
+    static String facesID = "f ";
+    static String breakID = "s ";
+
+    static int cordSize = 2;
+    static int normalSize = 3;
+    static int verticesSize = 3;
+
+    public static RawModel loadOBJ(String path) {
+        reset();
 
 
-    public static ModelData loadOBJ(String objFileName) {
-        FileReader isr = null;
-        File objFile = new File( objFileName );
-        try {
-            isr = new FileReader(objFile);
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found in res; don't use any extention");
-        }
-        BufferedReader reader = new BufferedReader(isr);
-        String line;
-        List<Vertex> vertices = new ArrayList<Vertex>();
-        List<Vector2f> textures = new ArrayList<Vector2f>();
-        List<Vector3f> normals = new ArrayList<Vector3f>();
-        List<Integer> indices = new ArrayList<Integer>();
-        try {
-            while (true) {
-                line = reader.readLine();
-                if (line.startsWith("v ")) {
-                    String[] currentLine = line.split(" ");
-                    Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
-                            (float) Float.valueOf(currentLine[2]),
-                            (float) Float.valueOf(currentLine[3]));
-                    Vertex newVertex = new Vertex(vertices.size(), vertex);
-                    vertices.add(newVertex);
+        try (BufferedReader bufReader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = bufReader.readLine()) != null) {
 
-                } else if (line.startsWith("vt ")) {
-                    String[] currentLine = line.split(" ");
-                    Vector2f texture = new Vector2f((float) Float.valueOf(currentLine[1]),
-                            (float) Float.valueOf(currentLine[2]));
-                    textures.add(texture);
-                } else if (line.startsWith("vn ")) {
-                    String[] currentLine = line.split(" ");
-                    Vector3f normal = new Vector3f((float) Float.valueOf(currentLine[1]),
-                            (float) Float.valueOf(currentLine[2]),
-                            (float) Float.valueOf(currentLine[3]));
-                    normals.add(normal);
-                } else if (line.startsWith("f ")) {
+                String[] values = line.split(" ");
+                float val1 = 0;
+                float val2 = 0;
+                float val3 = 0;
+
+                try {
+                    if (values.length > 1) val1 = Float.parseFloat(values[1]);
+                    if (values.length > 2) val2 = Float.parseFloat(values[2]);
+                    if (values.length > 3) val3 = Float.parseFloat(values[3]);
+                }catch (Exception e){
+                    System.out.println(String.format("Can't convert line: %s from file: %s", line, path));
+                }
+
+                if (line.startsWith(verticesID)) {
+                    Vertex newVertex = new Vertex(verticesList.size(), new Vector3f(val1, val2, val3));
+                    verticesList.add(newVertex);
+                } else if (line.startsWith(cordsID)) {
+                    cordsList.add(new Vector2f(val1, val2));
+                } else if (line.startsWith(normalsID)) {
+                    normalsList.add(new Vector3f(val1, val2, val3));
+                } else if (line.startsWith(breakID)) {
                     break;
                 }
             }
-            while (line != null && line.startsWith("f ")) {
-                String[] currentLine = line.split(" ");
-                String[] vertex1 = currentLine[1].split("/");
-                String[] vertex2 = currentLine[2].split("/");
-                String[] vertex3 = currentLine[3].split("/");
-                processVertex(vertex1, vertices, indices);
-                processVertex(vertex2, vertices, indices);
-                processVertex(vertex3, vertices, indices);
-                line = reader.readLine();
+
+            while ((line = bufReader.readLine()) != null) {
+                if(line.startsWith(facesID)) {
+                    String[] faces = line.split(" ");
+
+                    for (int i = 1; i < faces.length; i++){
+                        processVertex(faces[i].split("/"));
+                    }
+                }
             }
-            reader.close();
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             System.err.println("Error reading the file");
         }
-        removeUnusedVertices(vertices);
-        float[] verticesArray = new float[vertices.size() * 3];
-        float[] texturesArray = new float[vertices.size() * 2];
-        float[] normalsArray = new float[vertices.size() * 3];
-        float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
-                texturesArray, normalsArray);
-        int[] indicesArray = convertIndicesListToArray(indices);
-        ModelData data = new ModelData(verticesArray, texturesArray, normalsArray, indicesArray,
-                furthest);
-        return data;
+
+        float[] verticesArray = new float[verticesList.size() * 3];
+        float[] cordsArray = new float[verticesList.size() * cordSize];
+        float[] normalsArray = new float[verticesList.size() * normalSize];
+        convertDataToArrays(verticesArray, cordsArray, normalsArray);
+
+        // Generate Indices
+        int[] indicesArray = new int[indicesList.size()];
+        for(int i = 0; i < indicesList.size(); i++){
+            indicesArray[i] = indicesList.get(i);
+        }
+
+        return Loader.getInstance().loadToVao(verticesArray, indicesArray, cordsArray, normalsArray);
     }
 
-    private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
+    public static void reset(){
+        verticesList.clear();
+        cordsList.clear();
+        normalsList.clear();
+        indicesList.clear();
+    }
+
+    private static void processVertex(String[] vertex) {
         int index = Integer.parseInt(vertex[0]) - 1;
-        Vertex currentVertex = vertices.get(index);
-        int textureIndex = Integer.parseInt(vertex[1]) - 1;
-        int normalIndex = Integer.parseInt(vertex[2]) - 1;
+        Vertex currentVertex = verticesList.get(index);
+        int cordsIndex = Integer.parseInt(vertex[1]) - 1;
+        int normalsIndex = Integer.parseInt(vertex[2]) - 1;
+
         if (!currentVertex.isSet()) {
-            currentVertex.setTextureIndex(textureIndex);
-            currentVertex.setNormalIndex(normalIndex);
-            indices.add(index);
+            currentVertex.setCordsIndex(cordsIndex);
+            currentVertex.setNormalIndex(normalsIndex);
+            indicesList.add(index);
         } else {
-            dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices,
-                    vertices);
+            dealWithAlreadyProcessedVertex(currentVertex, cordsIndex, normalsIndex);
         }
     }
 
-    private static int[] convertIndicesListToArray(List<Integer> indices) {
-        int[] indicesArray = new int[indices.size()];
-        for (int i = 0; i < indicesArray.length; i++) {
-            indicesArray[i] = indices.get(i);
-        }
-        return indicesArray;
-    }
+    private static void convertDataToArrays(float[] verticesArray, float[] cordsArray, float[] normalsArray) {
 
-    private static float convertDataToArrays(List<Vertex> vertices, List<Vector2f> textures,
-                                             List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
-                                             float[] normalsArray) {
-        float furthestPoint = 0;
-        for (int i = 0; i < vertices.size(); i++) {
-            Vertex currentVertex = vertices.get(i);
-            if (currentVertex.getLength() > furthestPoint) {
-                furthestPoint = currentVertex.getLength();
-            }
+
+        for (int i = 0; i < verticesList.size(); i++) {
+            Vertex currentVertex = verticesList.get(i);
+
             Vector3f position = currentVertex.getPosition();
-            Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
-            Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
-            verticesArray[i * 3] = position.x;
-            verticesArray[i * 3 + 1] = position.y;
-            verticesArray[i * 3 + 2] = position.z;
-            texturesArray[i * 2] = textureCoord.x;
-            texturesArray[i * 2 + 1] = 1 - textureCoord.y;
-            normalsArray[i * 3] = normalVector.x;
-            normalsArray[i * 3 + 1] = normalVector.y;
-            normalsArray[i * 3 + 2] = normalVector.z;
+            Vector2f textureCoord = cordsList.get(currentVertex.getCordsIndex());
+            Vector3f normalVector = normalsList.get(currentVertex.getNormalIndex());
+
+            int offset = i * verticesSize;
+            verticesArray[offset] = position.x;
+            verticesArray[offset + 1] = position.y;
+            verticesArray[offset + 2] = position.z;
+
+            offset = i * cordSize;
+            cordsArray[offset] = textureCoord.x;
+            cordsArray[offset + 1] = 1 - textureCoord.y;
+
+             offset = i * normalSize;
+            normalsArray[offset] = normalVector.x;
+            normalsArray[offset + 1] = normalVector.y;
+            normalsArray[offset + 2] = normalVector.z;
         }
-        return furthestPoint;
     }
 
-    private static void dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex,
-                                                       int newNormalIndex, List<Integer> indices, List<Vertex> vertices) {
-        if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
-            indices.add(previousVertex.getIndex());
+    private static void dealWithAlreadyProcessedVertex(Vertex vertex, int textureIndex, int newNormalIndex) {
+        if (vertex.hasSameTextureAndNormal(textureIndex, newNormalIndex)) {
+            indicesList.add(vertex.getIndex());
         } else {
-            Vertex anotherVertex = previousVertex.getDuplicateVertex();
+            Vertex anotherVertex = vertex.getDuplicateVertex();
             if (anotherVertex != null) {
-                dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex,
-                        indices, vertices);
+                dealWithAlreadyProcessedVertex(anotherVertex, textureIndex, newNormalIndex);
             } else {
-                Vertex duplicateVertex = new Vertex(vertices.size(), previousVertex.getPosition());
-                duplicateVertex.setTextureIndex(newTextureIndex);
+                Vertex duplicateVertex = new Vertex(verticesList.size(), vertex.getPosition());
+                duplicateVertex.setCordsIndex(textureIndex);
                 duplicateVertex.setNormalIndex(newNormalIndex);
-                previousVertex.setDuplicateVertex(duplicateVertex);
-                vertices.add(duplicateVertex);
-                indices.add(duplicateVertex.getIndex());
-            }
+                vertex.setDuplicateVertex(duplicateVertex);
 
-        }
-    }
-
-    private static void removeUnusedVertices(List<Vertex> vertices){
-        for(Vertex vertex:vertices){
-            if(!vertex.isSet()){
-                vertex.setTextureIndex(0);
-                vertex.setNormalIndex(0);
+                verticesList.add(duplicateVertex);
+                indicesList.add(duplicateVertex.getIndex());
             }
         }
     }
-
 }
-

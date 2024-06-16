@@ -7,12 +7,13 @@ public class Vertex {
 
     private static final int NO_INDEX = -1;
 
-    private Vector3f position;
-    private int textureIndex = NO_INDEX;
+    private int index;
+    private int cordsIndex = NO_INDEX;
     private int normalIndex = NO_INDEX;
     private Vertex duplicateVertex = null;
-    private int index;
+
     private float length;
+    private Vector3f position;
 
     public Vertex(int index,Vector3f position){
         this.index = index;
@@ -24,20 +25,16 @@ public class Vertex {
         return index;
     }
 
-    public float getLength(){
-        return length;
-    }
-
     public boolean isSet(){
-        return textureIndex!=NO_INDEX && normalIndex!=NO_INDEX;
+        return cordsIndex != NO_INDEX && normalIndex != NO_INDEX;
     }
 
     public boolean hasSameTextureAndNormal(int textureIndexOther, int normalIndexOther){
-        return textureIndexOther==textureIndex && normalIndexOther==normalIndex;
+        return textureIndexOther== cordsIndex && normalIndexOther==normalIndex;
     }
 
-    public void setTextureIndex(int textureIndex){
-        this.textureIndex = textureIndex;
+    public void setCordsIndex(int cordsIndex){
+        this.cordsIndex = cordsIndex;
     }
 
     public void setNormalIndex(int normalIndex){
@@ -48,8 +45,8 @@ public class Vertex {
         return position;
     }
 
-    public int getTextureIndex() {
-        return textureIndex;
+    public int getCordsIndex() {
+        return cordsIndex;
     }
 
     public int getNormalIndex() {

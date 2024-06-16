@@ -67,6 +67,7 @@ public class Camera {
 
     public void calcPitch(){
         if(mouse.isButtonPressed(GLFW_MOUSE_BUTTON_1)){
+         //   if(pitch + mouseDelta.y < 10) return;;
             pitch += (float) mouseDelta.y * 0.1f;
         }
     }

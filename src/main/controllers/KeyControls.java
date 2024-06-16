@@ -20,12 +20,12 @@ public class KeyControls extends Component {
 
     @Override
     public void update(float deltaTime) {
-        float val = 0.02f;
+        float val = 0.2f;
 
         if(keyboard.isKeyPressed(GLFW_KEY_1)){
-            player.increaseRotation(new Vector3f(1, 0, 0));
+            player.increasePosition(new Vector3f(0, 1, 0));
         }else if(keyboard.isKeyPressed(GLFW_KEY_2)){
-            player.increaseRotation(new Vector3f(0, 1, 0));
+            player.increasePosition(new Vector3f(0, -1, 0));
         }else if(keyboard.isKeyPressed(GLFW_KEY_3)){
             player.increaseRotation(new Vector3f(0, 0, 1));
         }
@@ -39,9 +39,9 @@ public class KeyControls extends Component {
         }
 
         if(keyboard.isKeyPressed(GLFW_KEY_RIGHT)){
-            currentTurnAngle = turnAngle;
-        }else if(keyboard.isKeyPressed(GLFW_KEY_LEFT)){
             currentTurnAngle = -turnAngle;
+        }else if(keyboard.isKeyPressed(GLFW_KEY_LEFT)){
+            currentTurnAngle = turnAngle;
         }else{
             currentTurnAngle = 0;
         }
@@ -53,7 +53,6 @@ public class KeyControls extends Component {
         }
 
         if(keyboard.isKeyPressed(GLFW_KEY_SPACE)){
-            System.out.println("jump");
             player.jump();
         }
 

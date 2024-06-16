@@ -1,8 +1,8 @@
 #version 400
 
 //Settings
-float density = 0;//0.005;
-float gradient =4;
+float density = 0;//0.003;
+float gradient = 1;//4;
 
 // from vbo
 in vec3 vPos;

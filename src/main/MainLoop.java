@@ -4,8 +4,6 @@ import main.controllers.KeyControls;
 
 import main.controllers.MouseControls;
 import main.converter.Loader;
-import main.converter.ModelData;
-import main.converter.ObjFileLoader;
 import main.converter.ObjectLoader;
 import main.entities.*;
 import main.models.ObjectModel;
@@ -46,49 +44,50 @@ public class MainLoop {
         Light light = new Light(lightPosition, lightColor);
 
         // Grass stuff
-        ModelData grassData = ObjectLoader.loadOBJ(grassObjPath);
-        RawModel grassRawModel = loader.loadToVao(grassData.getVertices(), grassData.getIndices(), grassData.getTextureCoords(), grassData.getNormals());
-        new ObjFileLoader().loadObjModel(dragonObjPath);
-        TextureModel grassTextureModel = new TextureModel(grassImagePath, false, 0, 0, true, true);
+        RawModel grassRawModel = ObjectLoader.loadOBJ(grassObjPath);
+        TextureModel grassTextureModel =  new TextureModel.Builder(grassImagePath).transparent().fakeLighted().build();
         ObjectModel grassObjectModel = new ObjectModel(grassRawModel, grassTextureModel);
 
         // Dragon stuff
-        ModelData data = ObjectLoader.loadOBJ(dragonObjPath);
-        RawModel dragonRawModel = loader.loadToVao(data.getVertices(), data.getIndices(), data.getTextureCoords(), data.getNormals());
-        TextureModel drgaonTextureModel = new TextureModel(redAlphaImagePath, false);
+        RawModel dragonRawModel = ObjectLoader.loadOBJ(dragonObjPath);
+        TextureModel drgaonTextureModel =  new TextureModel.Builder(redAlphaImagePath).build();
         ObjectModel dragonObjectModel = new ObjectModel(dragonRawModel, drgaonTextureModel);
 
         // Bunny stuff
-        ModelData bunnyData = ObjectLoader.loadOBJ(bunnyObjPath);
-        RawModel dragonRaw = loader.loadToVao(bunnyData.getVertices(), bunnyData.getIndices(), bunnyData.getTextureCoords(), bunnyData.getNormals());
-        TextureModel bunnyTexture = new TextureModel(redAlphaImagePath, false);
+        RawModel dragonRaw = ObjectLoader.loadOBJ(bunnyObjPath);
+        TextureModel bunnyTexture =  new TextureModel.Builder(redAlphaImagePath).reflectivity(defaultReflectivity).shineDamper(defaultShineDamper).build();
         ObjectModel bunnyModel = new ObjectModel(dragonRaw, bunnyTexture);
 
+        // Player
+        RawModel playerRaw = ObjectLoader.loadOBJ(personObjPath);
+        TextureModel playerTexture = new TextureModel.Builder(personImagePath).build();
+        ObjectModel playerModel = new ObjectModel(playerRaw, playerTexture);
+
         // Fern stuff
-        RawModel fernRawModel = new ObjFileLoader().loadObjModel(fernObj);
-        TextureModel fernTextureModel = new TextureModel(fernImagePath, true, 0, 0, true, true);
+        RawModel fernRawModel = ObjectLoader.loadOBJ(fernObj);
+        TextureModel fernTextureModel =  new TextureModel.Builder(fernImagePath).fakeLighted().build();
         ObjectModel fernObjectModel = new ObjectModel(fernRawModel, fernTextureModel);
 
         // Tree stuff
-        RawModel treeRawModel = new ObjFileLoader().loadObjModel(treeObjPath);
-        TextureModel treeTextureModel = new TextureModel(treeImagePath, true, 0, 0);
+        RawModel treeRawModel = ObjectLoader.loadOBJ(treeObjPath);
+        TextureModel treeTextureModel =  new TextureModel.Builder(treeImagePath).build();;
         ObjectModel treeObjectModel = new ObjectModel(treeRawModel, treeTextureModel);
 
         // LowPolyTree stuff
-        RawModel lowPoyTreeRawModel = new ObjFileLoader().loadObjModel(lowPolyTreeObjPath);
-        TextureModel lowPolyTreeTexture = new TextureModel(lowPolyTreeImagePath, true, 10, 0);
+        RawModel lowPoyTreeRawModel =ObjectLoader.loadOBJ(lowPolyTreeObjPath);
+        TextureModel lowPolyTreeTexture = new TextureModel.Builder(lowPolyTreeImagePath).shineDamper(10).build();
         ObjectModel lowPolyTreeObject = new ObjectModel(lowPoyTreeRawModel, lowPolyTreeTexture);
 
         // Terrain
-        TerrainTexture backgroundTex = new TerrainTexture(new TextureModel(grassSecondTerrainImagePath, false, 20, 5).getID());
-        TerrainTexture rTex = new TerrainTexture(new TextureModel(mudTerrainImagePath, false, 20, 5).getID());
-        TerrainTexture gTex = new TerrainTexture(new TextureModel(grassFlowerTerrainImagePath, false, 20, 5).getID());
-        TerrainTexture bTex = new TerrainTexture(new TextureModel(pathTerrainImagePath, false, 20, 5).getID());
+        TerrainTexture backgroundTex = new TerrainTexture(new TextureModel.Builder(grassSecondTerrainImagePath).build().getID());
+        TerrainTexture rTex = new TerrainTexture(new TextureModel.Builder(mudTerrainImagePath).build().getID());
+        TerrainTexture gTex = new TerrainTexture(new TextureModel.Builder(grassFlowerTerrainImagePath).build().getID());
+        TerrainTexture bTex = new TerrainTexture(new TextureModel.Builder(pathTerrainImagePath).build().getID());
 
         TerrainTexturePack terrainPack = new TerrainTexturePack(backgroundTex, rTex, gTex, bTex);
-        TerrainTexture blendTexture = new TerrainTexture(new TextureModel(blendMapImagePath, false).getID());
+        TerrainTexture blendTexture = new TerrainTexture(new TextureModel.Builder(blendMapImagePath).build().getID());
 
-         terrain = new Terrain(0, -1, terrainPack, blendTexture, heightMapPath);
+         terrain = new Terrain(0, 0, terrainPack, blendTexture, heightMapPath);
        // Terrain terrain2 = new Terrain(-1, -1, terrainPack, blendTexture);
         terrainList.add(terrain);
       //  terrainList.add(terrain2);
@@ -100,7 +99,7 @@ public class MainLoop {
         generateEntities(fernObjectModel, fernScale, defaultCount, terrain);
         generateEntities(grassObjectModel, 1, defaultCount, terrain);
 
-        Player player = new Player(bunnyModel, new Vector3f(0, 0, -10), new Vector3f(), 0.5f);
+        Player player = new Player(playerModel, new Vector3f(0, 0, 0), new Vector3f(), 0.5f);
         Entity dragon = new Entity(dragonObjectModel, new Vector3f(15, 1, -100), new Vector3f(), 1);
         entities.add(dragon);
         entities.add(player);

@@ -23,51 +23,66 @@ public class TextureModel {
     private boolean hasTransparency;
     private boolean hasFakeLightning;
 
-    public TextureModel(String filePath, boolean flip){
-        this.shineDamper = defaultShineDamper;
-        this.reflectivity = defaultReflectivity;
-        this.filePath = filePath;
-        this.flip = flip;
+    private TextureModel(Builder builder){
+        this.flip = builder.flip;
+        this.filePath = builder.filePath;
+        this.shineDamper = builder.shineDamper;
+        this.reflectivity = builder.reflectivity;
+        this.hasTransparency = builder.hasTransparency;
+        this.hasFakeLightning = builder.hasFakeLightning;
 
         create();
     }
 
-    public TextureModel(String filePath, boolean flip, float shineDamper, float reflectivity){
-        this.reflectivity = reflectivity;
-        this.shineDamper = shineDamper;
-        this.filePath = filePath;
-        this.flip = flip;
+    public static class Builder{
+        // required
+        private String filePath;
 
-        create();
+        // optional
+        private float shineDamper;
+        private float reflectivity;
+
+        private boolean flip;
+        private boolean hasTransparency;
+        private boolean hasFakeLightning;
+
+        public Builder(String filePath){
+            this.filePath = filePath;
+        }
+
+        public Builder shineDamper(float val){
+            this.shineDamper = val;
+            return this;
+        }
+
+        public Builder reflectivity(float val){
+            this.reflectivity = val;
+            return this;
+        }
+
+        public Builder flip(){
+            flip = true;
+            return  this;
+        }
+
+        public Builder transparent(){
+            hasTransparency = true;
+            return  this;
+        }
+
+        public Builder fakeLighted(){
+            hasFakeLightning = true;
+            return this;
+        }
+
+        public TextureModel build(){
+            return new TextureModel(this);
+        }
     }
-
-    public TextureModel(String filePath, boolean flip, boolean hasTransparency, boolean hasFakeLightning){
-        this.hasFakeLightning = hasFakeLightning;
-        this.hasTransparency = hasTransparency;
-        this.reflectivity = defaultReflectivity;
-        this.shineDamper = defaultShineDamper;
-        this.filePath = filePath;
-        this.flip = flip;
-
-        create();
-    }
-
-    public TextureModel(String filePath, boolean flip, float shineDamper, float reflectivity, boolean hasTransparency, boolean hasFakeLightning){
-        this.reflectivity = defaultReflectivity;
-        this.shineDamper = defaultShineDamper;
-        this.hasFakeLightning = hasFakeLightning;
-        this.hasTransparency = hasTransparency;
-        this.filePath = filePath;
-        this.flip = flip;
-
-        create();
-    }
-
 
     private void create(){
-
+        glGenerateMipmap(GL_TEXTURE_2D);
         ID = glGenTextures();
-    //    glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, ID);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -75,12 +90,12 @@ public class TextureModel {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-//       if(!filePath.equals(lowPolyTreeImagePath)) {
+
 //            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 //            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f);
-//        }else{
+
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
- //       }
+
 
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);

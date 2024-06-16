@@ -18,11 +18,11 @@ public class Configuration {
 
     // Window Settings
     public static final String WINDOW_TITLE = "Hosta";
-    public static final int WINDOW_WIDTH = 1140;
-    public static final int WINDOW_HEIGHT = 810;
+    public static final int WINDOW_WIDTH = 1920;//1140;
+    public static final int WINDOW_HEIGHT = 1020;//810;
 
-    public static int shiftXAxis = 1750;
-    public static int shiftYAxis = -50;
+    public static int shiftXAxis = 0;//1750;
+    public static int shiftYAxis = 0;//-50;
 
     // Shaders
     public static String entityFragmentShaderPath = Path.fromShader("EntityFragmentShader");
@@ -43,6 +43,7 @@ public class Configuration {
     public static final String lowPolyTreeImagePath = Path.fromTexture("lowPolyTree.png");
     public static final String fernImagePath = Path.fromTexture("fern.png");
     public static final String heightMapPath = Path.fromTexture("heightMap.png");
+    public static final String personImagePath = Path.fromTexture("person.png");
 
     public static final String grassSecondTerrainImagePath = Path.fromTexture("terrainGrassSecond.png");
     public static final String mudTerrainImagePath = Path.fromTexture("mud.png");
@@ -58,6 +59,7 @@ public class Configuration {
     public static final String grassObjPath =Path.fromObject("grass");
     public static final String lowPolyTreeObjPath = Path.fromObject("lowPolyTree");
     public static final String droneObjPath = Path.fromObject("drone");
+    public static final String personObjPath = Path.fromObject("person");
 
     // Projection
     public static float FOV = 70;
@@ -73,7 +75,7 @@ public class Configuration {
 
     // Light
     public static Vector3f lightColor = (new Vector3f(1, 1, 1));
-    public static Vector3f lightPosition = (new Vector3f(10, 10, 0));
+    public static Vector3f lightPosition = (new Vector3f(800, 50, 0));
 
     public static float defaultReflectivity = 1;
     public static float defaultShineDamper = 10;

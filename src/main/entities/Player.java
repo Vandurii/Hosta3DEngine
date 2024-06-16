@@ -33,7 +33,6 @@ public class Player extends Entity{
 
         // Decrease y value if the value is greater the 0.
         if(upwardSpeed != 0) {
-            System.out.println(upwardSpeed);
             increasePosition(new Vector3f(0, upwardSpeed, 0));
 
             // Set y val to 0, if it is less, set upward val to 0
@@ -43,15 +42,13 @@ public class Player extends Entity{
             }
             upwardSpeed += gravity * dt;
         }else if(getPosition().y >= terrainHeight){
-            upwardSpeed += gravity * dt;
+            upwardSpeed -= jumpPower;
         }
     }
 
     public void jump(){
         if(getPosition().y <= terrain.getHeightOfTerrain(getPosition().x, getPosition().z)){
             upwardSpeed = jumpPower;
-        }else{
-            System.out.println("dont");
         }
     }
 }
