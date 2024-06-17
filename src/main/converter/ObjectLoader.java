@@ -44,7 +44,7 @@ public class ObjectLoader {
                     if (values.length > 2) val2 = Float.parseFloat(values[2]);
                     if (values.length > 3) val3 = Float.parseFloat(values[3]);
                 }catch (Exception e){
-                    System.out.println(String.format("Can't convert line: %s from file: %s", line, path));
+//                    System.out.println(String.format("Can't convert line: %s from file: %s", line, path));
                 }
 
                 if (line.startsWith(verticesID)) {

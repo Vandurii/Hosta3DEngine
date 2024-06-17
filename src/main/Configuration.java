@@ -41,7 +41,7 @@ public class Configuration {
     public static final String treeImagePath = Path.fromTexture("tree.png");
     public static final String grassImagePath = Path.fromTexture("grassTexture.png");
     public static final String lowPolyTreeImagePath = Path.fromTexture("lowPolyTree.png");
-    public static final String fernImagePath = Path.fromTexture("fern.png");
+    public static final String fernImagePath = Path.fromTexture("fernAtlas.png");
     public static final String heightMapPath = Path.fromTexture("heightMap.png");
     public static final String personImagePath = Path.fromTexture("person.png");
 
@@ -115,6 +115,9 @@ public class Configuration {
     public static String gTextureID = "gTexture";
     public static String bTextureID = "bTexture";
     public static String blendTextureID = "blendMap";
+
+    public static String numberOfRowsID = "numberOfRows";
+    public static String textureOffset = "texOffset";
 
     // PlayerController
     public static float runSpeed = 200;

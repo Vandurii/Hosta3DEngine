@@ -26,7 +26,6 @@ uniform mat4 projection;
 
 uniform vec3 lightPos;
 
-
 void main(){
     // Calculate pixel position.
     vec4 worldPosition = transformation * vec4(vPos, 1);

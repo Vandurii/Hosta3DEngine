@@ -15,6 +15,7 @@ public class TextureModel {
     private String filePath;
     private int ID;
     private int width, height;
+    private int numberOfRows;
     private boolean flip;
 
     private float shineDamper;
@@ -27,6 +28,7 @@ public class TextureModel {
         this.flip = builder.flip;
         this.filePath = builder.filePath;
         this.shineDamper = builder.shineDamper;
+        this.numberOfRows = builder.numberOfRows;
         this.reflectivity = builder.reflectivity;
         this.hasTransparency = builder.hasTransparency;
         this.hasFakeLightning = builder.hasFakeLightning;
@@ -39,6 +41,8 @@ public class TextureModel {
         private String filePath;
 
         // optional
+        private int numberOfRows;
+
         private float shineDamper;
         private float reflectivity;
 
@@ -48,6 +52,7 @@ public class TextureModel {
 
         public Builder(String filePath){
             this.filePath = filePath;
+            this.numberOfRows = 1;
         }
 
         public Builder shineDamper(float val){
@@ -72,6 +77,11 @@ public class TextureModel {
 
         public Builder fakeLighted(){
             hasFakeLightning = true;
+            return this;
+        }
+
+        public Builder rowsNumber(int numberOfRows){
+            this.numberOfRows = numberOfRows;
             return this;
         }
 
@@ -141,31 +151,19 @@ public class TextureModel {
         return shineDamper;
     }
 
-    public void setShineDamper(float shineDamper) {
-        this.shineDamper = shineDamper;
-    }
-
     public float getReflectivity() {
         return reflectivity;
-    }
-
-    public void setReflectivity(float reflectivity) {
-        this.reflectivity = reflectivity;
     }
 
     public boolean hasTransparency() {
         return hasTransparency;
     }
 
-    public void setTransparency(boolean hasTransparency) {
-        this.hasTransparency = hasTransparency;
-    }
-
     public boolean hasFakeLightning() {
         return hasFakeLightning;
     }
 
-    public void setFakeLightning(boolean hasFakeLightning) {
-        this.hasFakeLightning = hasFakeLightning;
+    public int getNumberOfRows(){
+        return numberOfRows;
     }
 }

@@ -10,6 +10,8 @@ import main.models.TextureModel;
 import main.shaders.EntityShader;
 import main.toolbox.Maths;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,8 @@ public class EntityRenderer{
             for(Entity entity: entry.getValue()) {
                 RawModel rawModel = entity.getObjectModel().getRawModel();
 
+                System.out.println(String.format("x:%.2f y:%.2f", entity.getTextureOffset().x, entity.getTextureOffset().y));
+                entityShader.uploadValue(textureOffset, new Vector2f(entity.getTextureOffset()));
                 entityShader.uploadValue(transformationID, Maths.transform(entity.getPosition(), entity.getRotation(), entity.getScale()));
                 glDrawElements(GL_TRIANGLES, rawModel.getVerticesCount(), GL_UNSIGNED_INT, 0);
             }
@@ -65,6 +69,7 @@ public class EntityRenderer{
         }
 
         // upload shader values
+        entityShader.uploadValue(numberOfRowsID, textureModel.getNumberOfRows());
         entityShader.uploadValue(fakeLightningID, textureModel.hasFakeLightning());
         entityShader.uploadValue(shineDamperID, textureModel.getShineDamper());
         entityShader.uploadValue(reflectivityID, textureModel.getReflectivity());

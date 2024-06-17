@@ -45,7 +45,7 @@ public class MainLoop {
 
         // Grass stuff
         RawModel grassRawModel = ObjectLoader.loadOBJ(grassObjPath);
-        TextureModel grassTextureModel =  new TextureModel.Builder(grassImagePath).transparent().fakeLighted().build();
+        TextureModel grassTextureModel =  new TextureModel.Builder("res/textures/flowerTexture.png").transparent().rowsNumber(4).fakeLighted().build();
         ObjectModel grassObjectModel = new ObjectModel(grassRawModel, grassTextureModel);
 
         // Dragon stuff
@@ -65,7 +65,7 @@ public class MainLoop {
 
         // Fern stuff
         RawModel fernRawModel = ObjectLoader.loadOBJ(fernObj);
-        TextureModel fernTextureModel =  new TextureModel.Builder(fernImagePath).fakeLighted().build();
+        TextureModel fernTextureModel =  new TextureModel.Builder(fernImagePath).fakeLighted().rowsNumber(2).build();
         ObjectModel fernObjectModel = new ObjectModel(fernRawModel, fernTextureModel);
 
         // Tree stuff
@@ -74,8 +74,8 @@ public class MainLoop {
         ObjectModel treeObjectModel = new ObjectModel(treeRawModel, treeTextureModel);
 
         // LowPolyTree stuff
-        RawModel lowPoyTreeRawModel =ObjectLoader.loadOBJ(lowPolyTreeObjPath);
-        TextureModel lowPolyTreeTexture = new TextureModel.Builder(lowPolyTreeImagePath).shineDamper(10).build();
+        RawModel lowPoyTreeRawModel = ObjectLoader.loadOBJ(lowPolyTreeObjPath);
+        TextureModel lowPolyTreeTexture = new TextureModel.Builder(lowPolyTreeImagePath).rowsNumber(1).shineDamper(10).build();
         ObjectModel lowPolyTreeObject = new ObjectModel(lowPoyTreeRawModel, lowPolyTreeTexture);
 
         // Terrain
@@ -89,7 +89,7 @@ public class MainLoop {
 
          terrain = new Terrain(0, 0, terrainPack, blendTexture, heightMapPath);
        // Terrain terrain2 = new Terrain(-1, -1, terrainPack, blendTexture);
-        terrainList.add(terrain);
+       terrainList.add(terrain);
       //  terrainList.add(terrain2);
 
         // GenerateEntities
@@ -159,7 +159,7 @@ public class MainLoop {
             int z = random.nextInt(startZ, startZ + terrain.getSize());
             float y = terrain.getHeightOfTerrain(x, z);
 
-            entities.add(new Entity(objectModel, new Vector3f(x, y, z ), new Vector3f(), scale));
+            entities.add(new Entity(objectModel, new Vector3f(x, y, z ), new Vector3f(),2, scale));
         }
     }
 

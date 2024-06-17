@@ -17,6 +17,9 @@ uniform vec3 lightPos;
 
 uniform float fakeLightning;
 
+uniform vec2 texOffset;
+uniform int numberOfRows;
+
 // out
 out vec3 fPos;
 out vec2 fTexCords;
@@ -27,22 +30,22 @@ out vec3 toCamVector;
 
 out float visibility;
 
-void main(){
+void main() {
     // Calculate pixel position.
     vec4 worldPosition = transformation * vec4(vPos, 1);
     vec4 positionRelativeToCamera = view * worldPosition;
     gl_Position = projection * positionRelativeToCamera;
 
     // Check fake lightning.
-
     vec3 normals = vNormals;
-    if(fakeLightning > 0.5){
+    if (fakeLightning > 0.5) {
         normals = vec3(1, 1, 1);
     }
 
     // out
     fPos = vPos;
-    fTexCords = vTexCords;
+    fTexCords =  (vTexCords / numberOfRows) + texOffset;
+
 
         // Calculate to ligth vector.
     fNormals = (transformation * vec4(normals, 0)).xyz;
