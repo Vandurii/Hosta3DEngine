@@ -1,8 +1,8 @@
 #version 400
 
 //Settings
-float density = 0;//0.003;
-float gradient = 1;//4;
+float density = 0.003;//0.003;
+float gradient = 4;//4;
 
 // from vbo
 in vec3 vPos;
@@ -14,7 +14,7 @@ out vec3 fPos;
 out vec2 fTexCords;
 
 out vec3 fNormals;
-out vec3 toLightVector;
+out vec3 toLightVector[4];
 out vec3 toCamVector;
 
 out float visibility;
@@ -24,7 +24,7 @@ uniform mat4 transformation;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform vec3 lightPos;
+uniform vec3 lightPos[4];
 
 void main(){
     // Calculate pixel position.
@@ -38,7 +38,10 @@ void main(){
 
         // Calculate to ligth vector.
     fNormals = (transformation * vec4(vNormals, 0)).xyz;
-    toLightVector = lightPos - worldPosition.xyz;
+
+    for(int i = 0; i < 4; i++) {
+        toLightVector[i] = lightPos[i] - worldPosition.xyz;
+    }
 
         // Calculate to camera vector.
     toCamVector = (inverse (view) * vec4(0, 0, 0, 1)).xyz - worldPosition.xyz;

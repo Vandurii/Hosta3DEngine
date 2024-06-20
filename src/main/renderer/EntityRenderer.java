@@ -40,6 +40,7 @@ public class EntityRenderer{
         entityShader.uploadValue(skyColorID, clearColor);
         entityShader.uploadValue(lightColorID, light.getColor());
         entityShader.uploadValue(lightPositionID, light.getPosition());
+        entityShader.uploadValue(attenuationID, light.getAttenuation());
         entityShader.uploadValue(viewID, Maths.createView(camera));
 
         for(Map.Entry<ObjectModel, List<Entity>> entry: entitiesList.entrySet()) {
@@ -49,7 +50,6 @@ public class EntityRenderer{
             for(Entity entity: entry.getValue()) {
                 RawModel rawModel = entity.getObjectModel().getRawModel();
 
-                System.out.println(String.format("x:%.2f y:%.2f", entity.getTextureOffset().x, entity.getTextureOffset().y));
                 entityShader.uploadValue(textureOffset, new Vector2f(entity.getTextureOffset()));
                 entityShader.uploadValue(transformationID, Maths.transform(entity.getPosition(), entity.getRotation(), entity.getScale()));
                 glDrawElements(GL_TRIANGLES, rawModel.getVerticesCount(), GL_UNSIGNED_INT, 0);

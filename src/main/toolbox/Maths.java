@@ -21,6 +21,15 @@ public class Maths {
         return transform;
     }
 
+    public static Matrix4f transform(Vector2f position, Vector2f scale){
+        Matrix4f transform = new Matrix4f();
+        transform.identity();
+        transform.translate(new Vector3f(position.x, position.y, 1));
+        transform.scale(new Vector3f(scale.x, scale.y, 1));
+
+        return transform;
+    }
+
     public static Matrix4f createProjection(){
         float aspectRatio = (float) WINDOW_WIDTH / WINDOW_HEIGHT;
         float yScale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);

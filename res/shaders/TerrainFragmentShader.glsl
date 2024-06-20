@@ -1,13 +1,13 @@
 #version 400
 // settings
-float minBrightness = 0.3;
+float minBrightness = 0.005;
 
 // from vertex
 in vec3 fPos;
 in vec2 fTexCords;
 
 in vec3 fNormals;
-in vec3 toLightVector;
+in vec3 toLightVector[4];
 
 in vec3 toCamVector;
 
@@ -17,7 +17,7 @@ in float visibility;
 out vec4 outCol;
 
 // Uploaded values.
-uniform vec3 lightColor;
+uniform vec3 lightColor[4];
 
 uniform float shineDamper;
 uniform float reflectivity;
@@ -29,6 +29,8 @@ uniform sampler2D rTexture;
 uniform sampler2D gTexture;
 uniform sampler2D bTexture;
 uniform sampler2D blendMap;
+
+uniform vec3 attenuation[4];
 
 void main(){
     // Texture color.
@@ -43,21 +45,31 @@ void main(){
     vec4 bTextureColor = texture(bTexture, tileCords) * blendMapColor.b;
     vec4 textureColor = backgroundTextureColor + rTextureColor + bTextureColor + gTextureColor;
 
-    // Light difusion.
     vec3 unitNormal = normalize(fNormals);
-    vec3 unitLightVector = normalize(toLightVector);
-    float nDot = dot(unitNormal, unitLightVector);
-    float brightness = max(nDot, minBrightness);
-    vec3 diffuse = brightness * lightColor;
-
-    // Light reflection.
     vec3 unitCamVector = normalize(toCamVector);
-    vec3 lightDirection = -unitLightVector;
-    vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
-    float specularFactor = dot(reflectedLightDirection, unitNormal);
-    specularFactor = max(specularFactor, 0);
-    float dampedFactor = pow(specularFactor, shineDamper);
-    vec3 finalSpecular = dampedFactor * reflectivity * lightColor;
+
+    vec3 diffuse = vec3(0);
+    vec3 finalSpecular = vec3(0);
+    for(int i = 0; i < 4; i++) {
+        // Attenuation.
+        float disttance = length(toLightVector[i]);
+        float attenuationFactor = attenuation[i].x + (attenuation[i].y * disttance) + (attenuation[i].z * disttance * disttance);
+
+        // Light difusion.
+        vec3 unitLightVector = normalize(toLightVector[i]);
+        float nDot = dot(unitNormal, unitLightVector);
+        float brightness = max(nDot, minBrightness);
+        diffuse = diffuse + (brightness * lightColor[i]) / attenuationFactor;
+        diffuse = max(diffuse, minBrightness);
+
+        // Light reflection.
+        vec3 lightDirection = -unitLightVector;
+        vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
+        float specularFactor = dot(reflectedLightDirection, unitNormal);
+        specularFactor = max(specularFactor, 0);
+        float dampedFactor = pow(specularFactor, shineDamper);
+        finalSpecular = finalSpecular + (dampedFactor * reflectivity * lightColor[i]) / attenuationFactor;
+    }
 
     // Out color.
     outCol = vec4(diffuse, 0) * textureColor; //+ vec4(finalSpecular, 1);

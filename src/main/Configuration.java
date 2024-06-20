@@ -29,9 +29,11 @@ public class Configuration {
     public static String entityVertexShaderPath = Path.fromShader("EntityVertexShader");
     public static String terrainFragmentShaderPath = Path.fromShader("terrainFragmentShader");
     public static String terrainVertexShaderPath = Path.fromShader("terrainVertexShader");
+    public static String guiFragmentShaderPath = Path.fromShader("GuiFragmentShader");
+    public static String guiVertexShaderPath = Path.fromShader("GuiVertexShader");
 
     // Background
-    public static final Vector4f clearColor = skyBlue;
+    public static final Vector4f clearColor = grey;
 
     // resources
     public static final String redAlphaImagePath = Path.fromRes("redAlpha.png");
@@ -39,17 +41,21 @@ public class Configuration {
     // textures
     public static final String terrainGrassImagePath = Path.fromTexture("terrainGrass.png");
     public static final String treeImagePath = Path.fromTexture("tree.png");
-    public static final String grassImagePath = Path.fromTexture("grassTexture.png");
+    public static final String grassImagePath = Path.fromTexture("flowerTexture.png");
     public static final String lowPolyTreeImagePath = Path.fromTexture("lowPolyTree.png");
     public static final String fernImagePath = Path.fromTexture("fernAtlas.png");
     public static final String heightMapPath = Path.fromTexture("heightMap.png");
     public static final String personImagePath = Path.fromTexture("person.png");
+    public static final String lampImagePath = Path.fromTexture("lamp.png");
 
     public static final String grassSecondTerrainImagePath = Path.fromTexture("terrainGrassSecond.png");
     public static final String mudTerrainImagePath = Path.fromTexture("mud.png");
     public static final String grassFlowerTerrainImagePath = Path.fromTexture("grassFlowers.png");
     public static final String pathTerrainImagePath = Path.fromTexture("path.png");
     public static final String blendMapImagePath = Path.fromTexture("blendMap.png");
+
+    public static final String haspidImagePath = Path.fromTexture("haspid.png");
+    public static final String healthImagePath = Path.fromTexture("health.png");
 
     // Objects
     public static final String dragonObjPath = Path.fromObject("dragon");
@@ -60,6 +66,7 @@ public class Configuration {
     public static final String lowPolyTreeObjPath = Path.fromObject("lowPolyTree");
     public static final String droneObjPath = Path.fromObject("drone");
     public static final String personObjPath = Path.fromObject("person");
+    public static final String lampObjPath = Path.fromObject("lamp");
 
     // Projection
     public static float FOV = 70;
@@ -118,6 +125,8 @@ public class Configuration {
 
     public static String numberOfRowsID = "numberOfRows";
     public static String textureOffset = "texOffset";
+
+    public static String attenuationID = "attenuation";
 
     // PlayerController
     public static float runSpeed = 200;

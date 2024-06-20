@@ -65,7 +65,6 @@ public class Entity {
 //    }
 
     public float getTextureXOffset(){
-        System.out.println(textureIndex);
         int column =  textureIndex % getObjectModel().getTextureModel().getNumberOfRows();
         return  (float)column / (float)getObjectModel().getTextureModel().getNumberOfRows();
     }

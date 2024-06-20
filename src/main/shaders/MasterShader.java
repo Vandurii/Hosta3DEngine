@@ -1,5 +1,6 @@
 package main.shaders;
 
+import main.entities.Light;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 
@@ -100,6 +101,12 @@ public abstract class MasterShader {
         }else if(type instanceof Boolean value){
             float val = value ? 1 : 0;
             glUniform1f(varLocation, val);
+        }else if(type instanceof Vector3f[] value){
+            for(int i = 0; i < value.length; i++){
+                varLocation = glGetUniformLocation(shaderProgramID, varName + "[" + i + "]");
+                Vector3f val = value[i];
+                glUniform3f(varLocation, val.x, val.y, val.z);
+            }
         }else{
             throw new IllegalStateException("Unexpected value in shader class uploadValue method. --> type:" + type.getClass().getSimpleName() );
         }

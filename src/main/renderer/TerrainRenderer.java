@@ -44,6 +44,7 @@ public class TerrainRenderer {
         // Upload values to shader
         terrainShader.uploadValue(skyColorID, clearColor);
         terrainShader.uploadValue(lightColorID, light.getColor());
+        terrainShader.uploadValue(attenuationID, light.getAttenuation());
         terrainShader.uploadValue(lightPositionID, light.getPosition());
         terrainShader.uploadValue(viewID, Maths.createView(camera));
 
