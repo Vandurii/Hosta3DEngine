@@ -31,9 +31,8 @@ public class GuiRenderer {
         };
 
         this.guiShader = new GuiShader(guiVertexShaderPath, guiFragmentShaderPath);
-        this.quad = Loader.getInstance().loadToVao(position);
+        this.quad = Loader.getInstance().loadToVao(position, 2);
     }
-
 
     public void render(List<GuiTextureModel> guiList){
 

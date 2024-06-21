@@ -31,6 +31,8 @@ public class MasterRenderer {
     private TerrainShader terrainShader;
     private TerrainRenderer terrainRenderer;
 
+    private SkyBoxRenderer skyBoxRenderer;
+
     private List<Terrain> terrainList;
     private Map<ObjectModel, List<Entity>> entitiesList;
 
@@ -45,6 +47,8 @@ public class MasterRenderer {
 
         this.entityShader = new EntityShader(entityVertexShaderPath, entityFragmentShaderPath);
         this.entityRenderer = new EntityRenderer(entityShader, projection);
+
+        this.skyBoxRenderer = new SkyBoxRenderer(projection);
     }
 
     public void render(Camera camera, Light light){
@@ -54,6 +58,7 @@ public class MasterRenderer {
         // Render
         entityRenderer.render(entitiesList, camera, light);
         terrainRenderer.render(terrainList, camera, light);
+        skyBoxRenderer.render(camera);
 
         // clear
         entitiesList.clear();

@@ -1,6 +1,9 @@
 package main.entities;
 
 import main.controllers.MouseListener;
+import main.converter.Loader;
+import main.converter.ObjectLoader;
+import main.terrains.Terrain;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 
@@ -67,9 +70,12 @@ public class Camera {
 
     public void calcPitch(){
         if(mouse.isButtonPressed(GLFW_MOUSE_BUTTON_1)){
-         //   if(pitch + mouseDelta.y < 10) return;;
+       //     if(pitch + mouseDelta.y < 10) return;;
             pitch += (float) mouseDelta.y * 0.1f;
         }
+//        Terrain terrain = player.getTerrain();
+//        float height = terrain.getHeightOfTerrain(player.getPosition().x , player.getPosition().z - 50);
+//          pitch = height + 15;
     }
 
     public void calcAngle(){

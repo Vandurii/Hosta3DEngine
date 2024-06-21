@@ -16,6 +16,8 @@ import main.renderer.Window;
 import main.terrains.Terrain;
 import main.texture.TerrainTexture;
 import main.texture.TerrainTexturePack;
+import main.toolbox.Maths;
+import main.toolbox.MousePicker;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -44,26 +46,26 @@ public class MainLoop {
     public static void main(String[] args){
         // Init Scene.
         init();
+        Vector3f firstLampPos = new Vector3f(185, 9.2f, 293);
+        Vector3f firstLampCol = new Vector3f(5f, 0, 0);
 
         Vector3f[] positions = {
-                new Vector3f(0, 1000, - 7000),
-                new Vector3f(185, 9.2f, 293),
+            lightPosition,
+                firstLampPos,
                 new Vector3f(370, 4.2f, 300),
                 new Vector3f(293, -6.8f, 305)
         };
 
-//        entities.add(new Entity(objectModel, new Vector3f(185, -4.7f, 293), new Vector3f(), 1));
-//        entities.add(new Entity(objectModel, new Vector3f(370, 4.2f, 300), new Vector3f(), 1));
-//        entities.add(new Entity(objectModel, new Vector3f(293, -6.8f, 305), new Vector3f(), 1));
+
 
         Vector3f[] colors = {
-                new Vector3f(0.001f, 0.001f, 0.001f),
-                new Vector3f(5f, 0, 0),
+                lightColor,
+                firstLampCol,
                 new Vector3f(0f, 5f, 5),
                 new Vector3f(5, 5f, 0)
         };
 
-        Light light = new Light(positions, colors, new Vector3f[]{new Vector3f(1f, 0, 0f), new Vector3f(1, 0.01f, 0.002f), new Vector3f(1, 0.01f, 0.002f), new Vector3f(1, 0.01f, 0.002f)});
+        Light light = new Light(positions, colors, new Vector3f[]{new Vector3f(0.7f, 0.0000000000001f, 0.0000000000001f), new Vector3f(0.1f, 0.01f, 0.002f), new Vector3f(1, 0.01f, 0.002f), new Vector3f(1, 0.01f, 0.002f)});
 
         // Grass stuff
         RawModel grassRawModel = ObjectLoader.loadOBJ(grassObjPath);
@@ -82,12 +84,12 @@ public class MainLoop {
 
         // Player
         RawModel playerRaw = ObjectLoader.loadOBJ(personObjPath);
-        TextureModel playerTexture = new TextureModel.Builder(personImagePath).build();
+        TextureModel playerTexture = new TextureModel.Builder(personImagePath).shineDamper(10).reflectivity(1).build();
         ObjectModel playerModel = new ObjectModel(playerRaw, playerTexture);
 
         // Fern stuff
         RawModel fernRawModel = ObjectLoader.loadOBJ(fernObj);
-        TextureModel fernTextureModel =  new TextureModel.Builder(fernImagePath).fakeLighted().reflectivity(1).shineDamper(10).rowsNumber(2).build();
+        TextureModel fernTextureModel =  new TextureModel.Builder(fernImagePath).fakeLighted().reflectivity(2).shineDamper(20).rowsNumber(2).build();
         ObjectModel fernObjectModel = new ObjectModel(fernRawModel, fernTextureModel);
 
         // Tree stuff
@@ -127,12 +129,13 @@ public class MainLoop {
         entities.add(player);
 
         RawModel rawModel = ObjectLoader.loadOBJ(lampObjPath);
-        TextureModel textureModel = new TextureModel.Builder(lampImagePath).reflectivity(1).shineDamper(10).build();
+        TextureModel textureModel = new TextureModel.Builder(pathTerrainImagePath).reflectivity(1).shineDamper(10).build();
         ObjectModel objectModel = new ObjectModel(rawModel, textureModel);
 
-        entities.add(new Entity(objectModel, new Vector3f(185, -4.7f, 293), new Vector3f(), 1));
-        entities.add(new Entity(objectModel, new Vector3f(370, 4.2f, 300), new Vector3f(), 1));
-        entities.add(new Entity(objectModel, new Vector3f(293, -6.8f, 305), new Vector3f(), 1));
+        Entity lamp = new Entity(objectModel, new Vector3f(), new Vector3f(), 1);
+        entities.add(lamp);
+        entities.add(new Entity(objectModel, new Vector3f(370, -8f, 300), new Vector3f(), 1));
+        entities.add(new Entity(objectModel, new Vector3f(293, -0f, 305), new Vector3f(), 1));
 
         // camera
         Camera camera = new Camera(player);
@@ -146,6 +149,8 @@ public class MainLoop {
         guiList.add(new GuiTextureModel(haspidImagePath, new Vector2f(0.75f, 0.75f), new Vector2f(0.25f, 0.25f), false));
         guiList.add(new GuiTextureModel(healthImagePath, new Vector2f(-0.7f, -0.8f), new Vector2f(0.25f, 0.25f), false));
 
+        MousePicker picker = new MousePicker(camera, Maths.createProjection(), terrain);
+
         while ( !glfwWindowShouldClose(window.getWindowPtr()) ) {
             // Calculate delta time.
             double time = glfwGetTime();
@@ -154,8 +159,14 @@ public class MainLoop {
             controller.update(deltaTime);
             player.update(deltaTime, terrain);
             camera.update(deltaTime);
+            // Picker must be updated after camera!
+            picker.update();
 
-            entities.get(entities.size() - 2).increaseRotation(new Vector3f(0, 1, 0));
+            Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+            if(terrainPoint != null){
+                lamp.setPosition(terrainPoint);
+                firstLampPos.set(new Vector3f(terrainPoint.x, terrainPoint.y + 16, terrainPoint.z));
+            }
 
             // Add Entities.
             for(Entity e: entities){
@@ -174,6 +185,8 @@ public class MainLoop {
 
             // Update last frame time.
             lastFrameTime = time;
+
+           // System.out.println(String.format("x:%.2f y:%.2f z:%.2f", picker.getCurrentRay().x, picker.getCurrentRay().y, picker.getCurrentRay().z));
         }
 
         // Destroy scene

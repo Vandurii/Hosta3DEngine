@@ -51,4 +51,8 @@ public class Player extends Entity{
             upwardSpeed = jumpPower;
         }
     }
+
+    public Terrain getTerrain(){
+        return  terrain;
+    }
 }

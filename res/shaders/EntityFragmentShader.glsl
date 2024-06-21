@@ -1,6 +1,6 @@
 #version 400
 // settings
-float minBrightness = 0.1;
+float minBrightness = 0.9;
 
 // from vertex
 in vec3 fPos;

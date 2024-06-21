@@ -13,16 +13,18 @@ public class Configuration {
 
     // Colors
     public static Vector4f skyBlue = new Vector4f(0.5f, 0.5f, 1f, 1);
+    public static Vector4f cloudsColor = new Vector4f(0.54444f, 0.62f, 0.69f, 1);
+
     public static Vector4f grey = new Vector4f(0.2f, 0.2f, 0.2f, 1);
     public static Vector4f fog = new Vector4f(0.7f, 0.7f, 0.7f, 1);
 
     // Window Settings
     public static final String WINDOW_TITLE = "Hosta";
-    public static final int WINDOW_WIDTH = 1920;//1140;
-    public static final int WINDOW_HEIGHT = 1020;//810;
+    public static final int WINDOW_WIDTH = 1520;//1140;
+    public static final int WINDOW_HEIGHT = 1080;
 
-    public static int shiftXAxis = 0;//1750;
-    public static int shiftYAxis = 0;//-50;
+    public static int shiftXAxis = 1750;
+    public static int shiftYAxis = -50;
 
     // Shaders
     public static String entityFragmentShaderPath = Path.fromShader("EntityFragmentShader");
@@ -31,9 +33,11 @@ public class Configuration {
     public static String terrainVertexShaderPath = Path.fromShader("terrainVertexShader");
     public static String guiFragmentShaderPath = Path.fromShader("GuiFragmentShader");
     public static String guiVertexShaderPath = Path.fromShader("GuiVertexShader");
+    public static String skyBoxFragmentShaderPath = Path.fromShader("skyBoxFragmentShader");
+    public static String skyBoxVertexShaderPath = Path.fromShader("skyBoxVertexShader");
 
     // Background
-    public static final Vector4f clearColor = grey;
+    public static final Vector4f clearColor = cloudsColor;
 
     // resources
     public static final String redAlphaImagePath = Path.fromRes("redAlpha.png");
@@ -53,6 +57,20 @@ public class Configuration {
     public static final String grassFlowerTerrainImagePath = Path.fromTexture("grassFlowers.png");
     public static final String pathTerrainImagePath = Path.fromTexture("path.png");
     public static final String blendMapImagePath = Path.fromTexture("blendMap.png");
+
+    public static final String skyBottomImagePath = Path.fromTexture("bottom.png");
+    public static final String skyTopImagePath = Path.fromTexture("top.png");
+    public static final String skyLeftImagePath = Path.fromTexture("left.png");
+    public static final String skyRightImagePath = Path.fromTexture("right.png");
+    public static final String skyFrontImagePath = Path.fromTexture("front.png");
+    public static final String skyBackImagePath = Path.fromTexture("back.png");
+
+    public static final String skyNightBottomImagePath = Path.fromTexture("nightBottom.png");
+    public static final String skyNightTopImagePath = Path.fromTexture("nightTop.png");
+    public static final String skyNightLeftImagePath = Path.fromTexture("nightLeft.png");
+    public static final String skyNightRightImagePath = Path.fromTexture("nightRight.png");
+    public static final String skyNightFrontImagePath = Path.fromTexture("nightFront.png");
+    public static final String skyNightBackImagePath = Path.fromTexture("nightBack.png");
 
     public static final String haspidImagePath = Path.fromTexture("haspid.png");
     public static final String healthImagePath = Path.fromTexture("health.png");
@@ -75,7 +93,7 @@ public class Configuration {
 
     // Camera
     public static float defaultPitch = 10;
-    public static float defaultDistanceFromPlayer = 50;
+    public static float defaultDistanceFromPlayer = 100;
 
     // Terrain
     public static int terrainYVal = 0;
@@ -128,9 +146,14 @@ public class Configuration {
 
     public static String attenuationID = "attenuation";
 
+    public static String fogColorID = "fogColor";
+    public static String fCubID = "fCub";
+    public static String sCubID = "sCub";
+    public static String blendFactorID = "blendFactor";
+
     // PlayerController
     public static float runSpeed = 200;
     public static float turnAngle = 160;
     public static float gravity = -50;
-    public static float jumpPower = 30;
+    public static float jumpPower = 20;
 }
