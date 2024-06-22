@@ -156,4 +156,7 @@ public class Configuration {
     public static float turnAngle = 160;
     public static float gravity = -50;
     public static float jumpPower = 20;
+
+    // Index
+    public static int NO_INDEX = -1;
 }

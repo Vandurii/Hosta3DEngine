@@ -3,42 +3,51 @@ package main.converter;
 
 import org.joml.Vector3f;
 
+import static main.Configuration.NO_INDEX;
+
 public class Vertex {
 
-    private static final int NO_INDEX = -1;
-
     private int index;
-    private int cordsIndex = NO_INDEX;
-    private int normalIndex = NO_INDEX;
-    private Vertex duplicateVertex = null;
+    private int cordsIndex;
+    private int normalIndex;
+    private Vertex twinVertex;
 
-    private float length;
     private Vector3f position;
 
-    public Vertex(int index,Vector3f position){
+    public Vertex(int index, Vector3f position){
+        this.cordsIndex = NO_INDEX;
+        this.normalIndex = NO_INDEX;
         this.index = index;
         this.position = position;
-        this.length = position.length();
     }
 
-    public int getIndex(){
-        return index;
+    public Vertex addTwin(int index, int texCordsIndex, int normalIndex, Vector3f position){
+        // Return null if texture and normal index are equal with this object or with twin object from this object
+        if(!hasSameTextureAndNormal(texCordsIndex, normalIndex)){
+            if(twinVertex == null){
+                Vertex twin = new Vertex(index, position);
+                twin.initialize(cordsIndex, normalIndex);
+                twinVertex = twin;
+                return twin;
+            }else{
+                return twinVertex.addTwin(index, cordsIndex, normalIndex, position);
+            }
+        }
+
+        return null;
     }
 
-    public boolean isSet(){
+    public void initialize(int cordsIndex, int normalIndex){
+        this.cordsIndex = cordsIndex;
+        this.normalIndex = normalIndex;
+    }
+
+    public boolean isInitialized(){
         return cordsIndex != NO_INDEX && normalIndex != NO_INDEX;
     }
 
-    public boolean hasSameTextureAndNormal(int textureIndexOther, int normalIndexOther){
-        return textureIndexOther== cordsIndex && normalIndexOther==normalIndex;
-    }
-
-    public void setCordsIndex(int cordsIndex){
-        this.cordsIndex = cordsIndex;
-    }
-
-    public void setNormalIndex(int normalIndex){
-        this.normalIndex = normalIndex;
+    public boolean hasSameTextureAndNormal(int cordsIndex, int normalIndex){
+        return cordsIndex == this.cordsIndex && normalIndex == this.normalIndex;
     }
 
     public Vector3f getPosition() {
@@ -53,13 +62,8 @@ public class Vertex {
         return normalIndex;
     }
 
-    public Vertex getDuplicateVertex() {
-        return duplicateVertex;
+    public int getIndex(){
+        return index;
     }
-
-    public void setDuplicateVertex(Vertex duplicateVertex) {
-        this.duplicateVertex = duplicateVertex;
-    }
-
 }
 

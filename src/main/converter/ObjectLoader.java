@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -27,9 +28,28 @@ public class ObjectLoader {
     static int verticesSize = 3;
 
     public static RawModel loadOBJ(String path) {
+        // Clear lists after previous use.
         reset();
 
+        // Load data from file.
+        loadDataFromFile(path);
 
+        // Convert vertices, cords and normal to array.
+        float[] verticesArray = new float[verticesList.size() * 3];
+        float[] cordsArray = new float[verticesList.size() * cordSize];
+        float[] normalsArray = new float[verticesList.size() * normalSize];
+        convertDataToArrays(verticesArray, cordsArray, normalsArray);
+
+        // Convert indices to array.
+        int[] indicesArray = new int[indicesList.size()];
+        for(int i = 0; i < indicesList.size(); i++){
+            indicesArray[i] = indicesList.get(i);
+        }
+
+        return Loader.getInstance().loadToVao(verticesArray, indicesArray, cordsArray, normalsArray);
+    }
+
+    public static void loadDataFromFile(String path){
         try (BufferedReader bufReader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = bufReader.readLine()) != null) {
@@ -48,7 +68,8 @@ public class ObjectLoader {
                 }
 
                 if (line.startsWith(verticesID)) {
-                    Vertex newVertex = new Vertex(verticesList.size(), new Vector3f(val1, val2, val3));
+                    int index = verticesList.size();
+                    Vertex newVertex = new Vertex(index, new Vector3f(val1, val2, val3));
                     verticesList.add(newVertex);
                 } else if (line.startsWith(cordsID)) {
                     cordsList.add(new Vector2f(val1, val2));
@@ -64,59 +85,51 @@ public class ObjectLoader {
                     String[] faces = line.split(" ");
 
                     for (int i = 1; i < faces.length; i++){
-                        processVertex(faces[i].split("/"));
+                        initializeVertex(faces[i].split("/"));
                     }
                 }
             }
-
         } catch (Exception e) {
             System.err.println("Error reading the file");
         }
-
-        float[] verticesArray = new float[verticesList.size() * 3];
-        float[] cordsArray = new float[verticesList.size() * cordSize];
-        float[] normalsArray = new float[verticesList.size() * normalSize];
-        convertDataToArrays(verticesArray, cordsArray, normalsArray);
-
-        // Generate Indices
-        int[] indicesArray = new int[indicesList.size()];
-        for(int i = 0; i < indicesList.size(); i++){
-            indicesArray[i] = indicesList.get(i);
-        }
-
-        return Loader.getInstance().loadToVao(verticesArray, indicesArray, cordsArray, normalsArray);
     }
 
-    public static void reset(){
-        verticesList.clear();
-        cordsList.clear();
-        normalsList.clear();
-        indicesList.clear();
-    }
-
-    private static void processVertex(String[] vertex) {
+    private static void initializeVertex(String[] vertex) {
         int index = Integer.parseInt(vertex[0]) - 1;
-        Vertex currentVertex = verticesList.get(index);
         int cordsIndex = Integer.parseInt(vertex[1]) - 1;
         int normalsIndex = Integer.parseInt(vertex[2]) - 1;
 
-        if (!currentVertex.isSet()) {
-            currentVertex.setCordsIndex(cordsIndex);
-            currentVertex.setNormalIndex(normalsIndex);
-            indicesList.add(index);
+        Vertex currentVertex = verticesList.get(index);
+
+        if (currentVertex.isInitialized()) {
+            addTwin(currentVertex, cordsIndex, normalsIndex);
         } else {
-            dealWithAlreadyProcessedVertex(currentVertex, cordsIndex, normalsIndex);
+            currentVertex.initialize(cordsIndex, normalsIndex);
+            indicesList.add(index);
+        }
+    }
+
+    private static void addTwin(Vertex vertex, int texCordsIndex, int normalIndex){
+        int index = verticesList.size();
+        // Check if exist object with this data, if not then create.
+        Vertex twin = vertex.addTwin(index, texCordsIndex, normalIndex, vertex.getPosition());
+
+        // If there was created new object add it to verticesList and load new index to the indicesList.
+        // If there wasn't created new object load old index.
+        if(twin != null){
+            verticesList.add(twin);
+            indicesList.add(twin.getIndex());
+        }else{
+            indicesList.add(vertex.getIndex());
         }
     }
 
     private static void convertDataToArrays(float[] verticesArray, float[] cordsArray, float[] normalsArray) {
-
-
         for (int i = 0; i < verticesList.size(); i++) {
             Vertex currentVertex = verticesList.get(i);
 
             Vector3f position = currentVertex.getPosition();
-            Vector2f textureCoord = cordsList.get(currentVertex.getCordsIndex());
+            Vector2f textureCords = cordsList.get(currentVertex.getCordsIndex());
             Vector3f normalVector = normalsList.get(currentVertex.getNormalIndex());
 
             int offset = i * verticesSize;
@@ -125,8 +138,8 @@ public class ObjectLoader {
             verticesArray[offset + 2] = position.z;
 
             offset = i * cordSize;
-            cordsArray[offset] = textureCoord.x;
-            cordsArray[offset + 1] = 1 - textureCoord.y;
+            cordsArray[offset] = textureCords.x;
+            cordsArray[offset + 1] = 1 - textureCords.y;
 
              offset = i * normalSize;
             normalsArray[offset] = normalVector.x;
@@ -135,22 +148,10 @@ public class ObjectLoader {
         }
     }
 
-    private static void dealWithAlreadyProcessedVertex(Vertex vertex, int textureIndex, int newNormalIndex) {
-        if (vertex.hasSameTextureAndNormal(textureIndex, newNormalIndex)) {
-            indicesList.add(vertex.getIndex());
-        } else {
-            Vertex anotherVertex = vertex.getDuplicateVertex();
-            if (anotherVertex != null) {
-                dealWithAlreadyProcessedVertex(anotherVertex, textureIndex, newNormalIndex);
-            } else {
-                Vertex duplicateVertex = new Vertex(verticesList.size(), vertex.getPosition());
-                duplicateVertex.setCordsIndex(textureIndex);
-                duplicateVertex.setNormalIndex(newNormalIndex);
-                vertex.setDuplicateVertex(duplicateVertex);
-
-                verticesList.add(duplicateVertex);
-                indicesList.add(duplicateVertex.getIndex());
-            }
-        }
+    public static void reset(){
+        verticesList.clear();
+        cordsList.clear();
+        normalsList.clear();
+        indicesList.clear();
     }
 }
